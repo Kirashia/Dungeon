@@ -2,11 +2,6 @@
 # =============================================================================== #
 #My convention folder for saving files via bit torrent sync, not meant for GitHub #
 # =============================================================================== #
-<<<<<<< HEAD
-/Assets*/*
-=======
-/Assets*/
->>>>>>> origin/develop
  
 # =============== #
 # Unity generated #
