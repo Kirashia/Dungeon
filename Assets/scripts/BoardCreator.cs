@@ -21,10 +21,8 @@ public class BoardCreator : MonoBehaviour {
     public GameObject startTile;
     public GameObject endTile;
 
-    public int roomHeightMin;
-    public int roomHeightMax;
-    public int roomWidthMin;
-    public int roomWidthMax;
+    public int roomHeight;
+    public int roomWidth;
     public int maxNumberOfRooms;
 
     private int[,] tiles;
@@ -89,9 +87,9 @@ public class BoardCreator : MonoBehaviour {
         pseudoRandom = new System.Random(seed.GetHashCode());
         borders = new Dictionary<Vector2, Direction>();
 
-        SetupTileArray();
+        //SetupTileArray();
 
-        //GenerateMapTemplate();
+        GenerateMapTemplate();
 
         //generates a full (all wall) larger map
         mainMapGO = Instantiate(roomTemplate, Vector3.zero, Quaternion.identity) as GameObject; //gameobject for the main map
@@ -102,7 +100,7 @@ public class BoardCreator : MonoBehaviour {
         borderWalls = mainMap.GetBorderWalls();
 
         //generates the cavernous rooms using the Room script
-        MakeRooms();
+        NewMakeRooms();
 
         mainMap.FindLargestReigon(); //makes sure all parts of the map are reachable
 
@@ -129,139 +127,105 @@ public class BoardCreator : MonoBehaviour {
             }
         }
 
-        int sPosX = 0;
-        int sPosY = 0;
-        bool exitPlaced;
+        System.Random r = pseudoRandom;
+
+        Vector2 start = new Vector2(r.Next(0, tiles.GetLength(0)), 0);
+        tiles[(int)start.x, (int)start.y] = 9;
+        bool exitPlaced = false;
         int randomDirection;
+        int prevRoom = 0;
+        int currentRoom = 1;
+        int prevDir = 9;
+        Vector2 pointer = start;
 
-        sPosX = pseudoRandom.Next(0, tiles.GetLength(0));
-        tiles[sPosX, sPosY] = 1; // 1 represents the starting room for the minute
-        GameObject tilem = Instantiate(wall, new Vector3(sPosX, sPosY, 0f), Quaternion.identity, floorHolder.transform) as GameObject;
-        tilem.name = "Start";
-        exitPlaced = false;
+        bool startingDir = true;
 
-        int control = 0;
+        int dy = 0;
+        int dx = 0;
 
-        int roomType = 1;
-        int overrideRoomType = 3;
-        int previousDir;
-        bool exception = false; // This is used in case the map encounters an error placing a room and needs to override a rule
-
-        randomDirection = pseudoRandom.Next(1, 5); // Cannot drop from start room so must be between one and 4
-
-        if (sPosX >= mapWidth - 1)
-            randomDirection = 2;
-        else if (sPosX <= 1)
-            randomDirection = 3;
-
-        Debug.Log("Starting d: " + randomDirection);
-
-        do
+        // Loop generates a solution path
+        while (!exitPlaced)
         {
-            if (exception)
+            dy = 0;
+            dx = 0;
+
+            if (!startingDir)
+                randomDirection = r.Next(1, 6);
+            else
             {
-                roomType = pseudoRandom.Next(3,5);
-                exception = false;
+                startingDir = false;
+                randomDirection = r.Next(1, 5); // won't drop unless hits edge
+            }
+
+            // Loop to make sure it doesn't backtrack
+            while (((randomDirection == 2 || randomDirection == 1) && (prevDir == 3 || prevDir == 4)) || ((prevDir == 2 || prevDir == 1) && (randomDirection == 3 || randomDirection == 4)))
+            {
+                randomDirection = r.Next(1, 6);
+            }
+
+            if (((randomDirection == 1 || randomDirection == 2) && (int)pointer.x == 0) || ((randomDirection == 3 || randomDirection == 4) && (int)pointer.x == 3))
+            {
+                if (pointer.y != 3)
+                {
+                    dy = 1;
+                    currentRoom = (prevRoom == 2) ? 4 : 2;
+                    tiles[(int)pointer.x, (int)pointer.y] = currentRoom;
+                    pointer += new Vector2(dx, dy);
+                    continue;
+                }
+                else
+                {
+                    exitPlaced = true;
+                    tiles[(int)pointer.x, (int)pointer.y] = 9;
+                    break;
+                }
+            }
+
+            else if (prevRoom == 2)
+            {
+                currentRoom = 3;
             }
             else
             {
-                roomType = 1;
+                currentRoom = 1;
             }
 
-            randomDirection = pseudoRandom.Next(1, 6);
-            Debug.Log(control + 1 + " move = " + randomDirection);
-            // Used to randomly select the next room on the solution path
             switch (randomDirection)
             {
                 case 1:
                 case 2:
-                    // Go left
-                    if (sPosX == 0)
-                    {
-                        sPosY++;
-                        sPosX = 0;
-                        roomType = 2;
-                        exception = true;
-                    }
-                    else
-                    {
-                        sPosX--;
-                    }
+                    dx = -1;
                     break;
-
                 case 3:
                 case 4:
-                    // Go right
-                    if (sPosX == mapWidth - 1)
-                    {
-                        Debug.Log("oz\\iueij");
-                        sPosY++;
-                        sPosX = mapWidth - 1;
-                        roomType = 2;
-                        exception = true;
-                    }
-                    else
-                    {
-                        sPosX++;
-                    }
+                    dx = 1;
                     break;
-
                 case 5:
-                    // Go down
-                    sPosY++;
-                    roomType = 2;
-                    exception = true;
+                    dy = 1;
+                    currentRoom = 2;
                     break;
             }
 
-            if (sPosY >= mapHeight)
+            if (dy == 1 && pointer.y == 3)
             {
-                // Place exit
-                sPosY--;
-                roomType = (pseudoRandom.Next(0, 2) == 1) ? 1 : 3;
-                GameObject tilen = Instantiate(wall, new Vector3(sPosX, sPosY, 0f), Quaternion.identity, floorHolder.transform) as GameObject;
-                tilen.name = "End";
                 exitPlaced = true;
+                tiles[(int)pointer.x, (int)pointer.y] = 9;
+                break;
             }
 
-            // Evaluating next direction
-            previousDir = randomDirection;
-            bool same = true;
-
-
-            // So that it doesn't backtrack on itself
-            // It can't go from 1 -> 3 or 1 -> 4 because that means going left then right which isn't allowed
-            while (same)
+            try
             {
-                randomDirection = pseudoRandom.Next(1, 6);
-                if ((randomDirection == 1 || randomDirection == 2) && !exception)
-                {
-                    if (previousDir == 3 || previousDir == 4)
-                        randomDirection = pseudoRandom.Next(1, 6);
-                    else
-                        same = false;
-                }
-                else if ((randomDirection == 3 || randomDirection == 4) && !exception)
-                {
-                    if (previousDir == 1 || previousDir == 2)
-                        randomDirection = pseudoRandom.Next(1, 6);
-                    else
-                        same = false;
-                } else
-                {
-                    same = false;
-                }
+                tiles[(int)pointer.x, (int)pointer.y] = currentRoom;
             }
-
-
-            // Now we have the position of our next room 
-            // we can add it to the array
-            Debug.Log("X: " + sPosX + "\nY: " + sPosY);
-            tiles[sPosX, sPosY] = roomType; // If we need to override the rules the room can be forced to be a particular type
-
-            control++;
-
-        } while (!exitPlaced && control < 3);
+            catch (System.Exception)
+            {
+                print("an error occurred");
+            }
+            pointer += new Vector2(dx, dy);
+            prevDir = randomDirection;
+            prevRoom = currentRoom;
+        
+        }
 
     }
 
@@ -313,6 +277,22 @@ public class BoardCreator : MonoBehaviour {
             AddRoomToMap(room.GetRoomNodeLayout(), pos);
         }
 
+    }
+
+    void NewMakeRooms()
+    {
+        tempSeed = seed;
+        for(int x = 0; x < mapWidth * roomWidth; x += roomWidth)
+        {
+            for (int y = 0; y < mapHeight * roomHeight; y += roomHeight)
+            {
+                Vector2 pos = new Vector2(x, y);
+                GameObject roomGO = Instantiate(roomTemplate, pos, Quaternion.identity, roomHolder.transform) as GameObject;
+                Room room = roomGO.GetComponent<Room>();
+                room.SetupRoom(pos, roomWidth, roomHeight, tempSeed, randomFillPercent);
+                room.MakeEntranceAndExits(tiles[x, y]);
+            }
+        }
     }
 
     // Need to change map gen. to be more like the one in the prototype

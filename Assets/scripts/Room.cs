@@ -39,6 +39,66 @@ public class Room : MonoBehaviour {
         isStartRoom = false;
     }
 
+    public void MakeEntranceAndExits(int direction)
+    {
+        // 1 - entrance and exit on both sides of map
+        // 2 - 1 with a bottom and a top exit
+        // 3 - 1 with a top exit
+        // 4 - 1 with only a bottom exit (unused)
+
+        // 0 - random
+
+        if (direction == 0)
+        {
+            // Adds a random exit shape to a non-solution-path room
+            direction = pseudoRandom.Next(1, 4);
+        }
+
+        int midHeight = roomHeight / 2;
+        int midWidth = roomWidth / 2;
+
+        switch (direction)
+        {
+            case 1:
+                // Sides
+                tiles[0, midHeight] = 0;
+                tiles[0, midHeight + 1] = 0;
+                tiles[roomWidth - 1, midHeight] = 0;
+                tiles[roomWidth - 1, midHeight + 1] = 0;
+                break;
+
+            case 2:
+                // Sides
+                tiles[0, midHeight] = 0;
+                tiles[0, midHeight + 1] = 0;
+                tiles[roomWidth - 1, midHeight] = 0;
+                tiles[roomWidth - 1, midHeight + 1] = 0;
+
+                // Top
+                tiles[midWidth, 0] = 0;
+                tiles[midWidth + 1, roomHeight - 1] = 0;
+
+                // Bottom
+                tiles[roomWidth - 1, 0] = 0;
+                tiles[roomWidth - 1, roomHeight - 1] = 0;
+
+                break;
+
+            case 3:
+                // Sides 
+                tiles[0, midHeight] = 0;
+                tiles[0, midHeight + 1] = 0;
+                tiles[roomWidth - 1, midHeight] = 0;
+                tiles[roomWidth - 1, midHeight + 1] = 0;
+
+                // Top
+                tiles[midWidth, 0] = 0;
+                tiles[midWidth + 1, roomHeight - 1] = 0;
+                break;
+
+        }
+    }
+
     public void SetupRoom(Vector3 pos, int width, int height, string tempSeed, int fillPercent)
     {
         //prelim variable setup
