@@ -16,7 +16,7 @@ public class Room : MonoBehaviour {
     public Vector2 entrancePos;
     public Vector2 endPos;
 
-    public GameObject wall;
+    public GameObject[] walls;
 
     private int[,] tiles;
     private int[,] actual;
@@ -101,7 +101,7 @@ public class Room : MonoBehaviour {
         }
     }
 
-    public void SetupRoom(Vector3 pos, int width, int height, string tempSeed, int fillPercent)
+    public void SetupRoom(Vector3 pos, int width, int height, string tempSeed, int fillPercent, GameObject[] wallTextures)
     {
         //prelim variable setup
         roomHeight = height;
@@ -113,6 +113,7 @@ public class Room : MonoBehaviour {
         borderWallsDirection = new Dictionary<Vector2, BoardCreator.Direction>();
         reigons = new Dictionary<int, HashSet<Vector2>>();
         checkedTiles = new HashSet<Vector2>();
+        walls = wallTextures;
 
         //map generation
         SetupTileArray();
@@ -125,25 +126,6 @@ public class Room : MonoBehaviour {
         //FindLargestReigon();
 
         MakeTileArrayFromNodes();
-        MakeBorderWallsArray();
-    }
-
-    public void SetupMap(Vector3 pos, int width, int height, string tempSeed, int fillPercent)
-    {
-        //prelim variable setup
-        roomHeight = height;
-        roomWidth = width;
-        seed = tempSeed;
-        startPos = pos;
-        randomFillPercent = fillPercent;
-        pseudoRandom = new System.Random(seed.GetHashCode());
-        borderWallsDirection = new Dictionary<Vector2, BoardCreator.Direction>();
-        reigons = new Dictionary<int, HashSet<Vector2>>();
-        checkedTiles = new HashSet<Vector2>();
-
-        //map generation
-        SetupTileArray();
-
         MakeBorderWallsArray();
     }
 
@@ -481,6 +463,28 @@ public class Room : MonoBehaviour {
                 if (tiles[x, y] == 1)
                     Instantiate(filled, new Vector3(x + offsetX, -(y + offsetY), 0f), Quaternion.identity, transform);
 
+            }
+        }
+    }
+
+    void InstantiateTiles(int offsetX, int offsetY)
+    {
+    for (int x = 0; x < actual.GetLength(0); x++)
+        {
+            for (int y = 0; y < actual.GetLength(1); y++)
+            {
+                if (actual[x, y] != 15 && actual[x, y] != 0)
+                {
+                    GameObject tilem = Instantiate(walls[0], new Vector3(x, y, 0f), Quaternion.identity, transform) as GameObject;
+                    tilem.name = "Compensation";
+                }
+
+                if (actual[x, y] != 15)
+                {
+                    GameObject tile = Instantiate(walls[actual[x, y]], new Vector3(x, y, 0f), Quaternion.identity, transform) as GameObject;
+                    tile.name = x + " " + y;
+                }
+                //Debug.Log(tile.transform.position);
             }
         }
     }

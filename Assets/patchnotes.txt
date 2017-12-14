@@ -1,3 +1,6 @@
+14/12/2017, 16:05 - 	cleaned code to remove warnings in the editor
+			removed unused functions
+
 14/12/2017, 15:41 - 	fixed map generation so that rooms now create cellular automata caverns
 			rooms created in a 4x4 grid rather than added to eachother's end
 			solution path maze works 90% of the time, needs checking
