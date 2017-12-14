@@ -23,12 +23,8 @@ public class BoardCreator : MonoBehaviour {
 
     public int roomHeight;
     public int roomWidth;
-    public int maxNumberOfRooms;
 
     private int[,] tiles;
-    private int[,] actual;
-    private List<Vector2> borderWalls;
-    //private Dictionary<Vector2, Direction> borders;
     private System.Random pseudoRandom;
 
     private Room mainMap;
@@ -37,40 +33,7 @@ public class BoardCreator : MonoBehaviour {
     private Vector2 endPos;
 
     private GameObject roomHolder;
-    private GameObject mainMapGO;
     
-    public enum TileType
-    {
-        Wall,
-        BorderWall,
-        Floor,
-        Filled,
-    }
-
-    public enum Direction
-    {
-        North,
-        East,
-        South,
-        West,
-    }
-
-    class TiledRoom
-    {
-        public int w;
-        public int h;
-        public int fP;
-        public string seed;
-
-        public TiledRoom(int width, int height, int fillPercent, string roomSeed)
-        {
-            w = width;
-            h = height;
-            fP = fillPercent;
-            seed = roomSeed;
-        }
-    }
-
     public void GenerateMap()
     {
         if (seed == null)

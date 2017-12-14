@@ -104,16 +104,18 @@ public class Room : MonoBehaviour {
     public void SetupRoom(Vector3 pos, int width, int height, string tempSeed, int fillPercent, GameObject[] wallTextures)
     {
         //prelim variable setup
-        roomHeight = height;
-        roomWidth = width;
-        seed = tempSeed;
-        startPos = pos;
-        randomFillPercent = fillPercent;
-        pseudoRandom = new System.Random(seed.GetHashCode());
-        borderWallsDirection = new Dictionary<Vector2, BoardCreator.Direction>();
-        reigons = new Dictionary<int, HashSet<Vector2>>();
-        checkedTiles = new HashSet<Vector2>();
-        walls = wallTextures;
+        {
+            roomHeight = height;
+            roomWidth = width;
+            seed = tempSeed;
+            startPos = pos;
+            randomFillPercent = fillPercent;
+            pseudoRandom = new System.Random(seed.GetHashCode());
+            borderWallsDirection = new Dictionary<Vector2, BoardCreator.Direction>();
+            reigons = new Dictionary<int, HashSet<Vector2>>();
+            checkedTiles = new HashSet<Vector2>();
+            walls = wallTextures;
+        }
 
         //map generation
         SetupTileArray();
