@@ -1,3 +1,12 @@
+14/12/2017, 17:09 -	fixed marching sq errors
+			added map border
+			started work on corridors (research)
+
+14/12/2017, 16:34 - 	noticed each room has a 1x1 border of wall0 on right and bottom edges, no wall15 there either, working on fix
+			renamed rooms to be the direction in the solution path
+			renamed tiles to be their coordinates
+			(16:48) error found to be in "GetScoreFor" in the marching sqaures portion of the code. disregarded the boundary values of x and y hence creating accidental border [FIXED]
+
 14/12/2017, 16:05 - 	cleaned code to remove warnings in the editor
 			removed unused functions
 

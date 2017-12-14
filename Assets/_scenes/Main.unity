@@ -230,10 +230,11 @@ MonoBehaviour:
   useRandomSeed: 0
   smoothness: 5
   randomFillPercent: 52
-  wall: {fileID: 1183251852118828, guid: c4573024f45b6764b9ce9e1ab8618853, type: 2}
+  wall: {fileID: 1762570467653278, guid: f6812553ec2a7fe4a9596b102d2dbd4c, type: 2}
   floor: {fileID: 1961553309645668, guid: fcec5f2c3460e3c419de13b5c7497986, type: 2}
   filled: {fileID: 1356210442151772, guid: 14d6b152f6c5fa34d9066cfaeb31aafe, type: 2}
   marchingSquares:
+  - {fileID: 1632778043627966, guid: fb8517749de7edc4384c3e0247a0d575, type: 2}
   - {fileID: 1341738279267068, guid: 39a6934bf76fa41428a7f82cb71a7c9a, type: 2}
   - {fileID: 1207983514622466, guid: f485f6ed209ae73449b8bbf4a285e9fa, type: 2}
   - {fileID: 1399281615841762, guid: 09e3f6a9a91f27d48a0562a4784a94c6, type: 2}
@@ -249,14 +250,17 @@ MonoBehaviour:
   - {fileID: 1073411190069658, guid: 09ce497dd25f5ec4facc1107106aaed7, type: 2}
   - {fileID: 1309188174625772, guid: dcd7f21f96669cc40b13a9bc4aa73fe1, type: 2}
   - {fileID: 1762570467653278, guid: f6812553ec2a7fe4a9596b102d2dbd4c, type: 2}
-  testRooms: []
+  testRooms:
+  - {fileID: 1394703432038168, guid: d1155c94eb821d74a904c969ea1d8452, type: 2}
+  - {fileID: 1093564537160340, guid: 5fe970650d9d9ab40aa98688e4a3f5ee, type: 2}
+  - {fileID: 1498342463929168, guid: 5522b5e99ef831d4b9300a390ea4b305, type: 2}
+  - {fileID: 1434751790355328, guid: f4d27df7356e41a49885bbf2a6401df1, type: 2}
   roomTemplate: {fileID: 1994049368568188, guid: 37cb2ea88688ad948812c9fa702033b3,
     type: 2}
   startTile: {fileID: 0}
   endTile: {fileID: 0}
-  roomHeight: 100
-  roomWidth: 100
-  maxNumberOfRooms: 1000
+  roomHeight: 25
+  roomWidth: 25
 --- !u!1 &2068369964 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1237411502322272, guid: fcafdb4bee87ad24f8c97bd40197b85d,

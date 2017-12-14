@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -9,7 +10,6 @@ public class Room : MonoBehaviour {
     public string seed;
     public Vector3 startPos;
     public GameObject filled;
-    public BoardCreator.Direction facingDirection;
     [Range(0, 100)] public int randomFillPercent;
     public bool isStartRoom;
     public bool isEndRoom;
@@ -22,7 +22,6 @@ public class Room : MonoBehaviour {
     private int[,] actual;
     private bool isStartRoomFlag;
     private bool isEndRoomFlag;
-    private Dictionary<Vector2, BoardCreator.Direction> borderWallsDirection;
     private HashSet<Vector2> checkedTiles;
     private Dictionary<int, HashSet<Vector2>> reigons;
     private System.Random pseudoRandom;
@@ -78,11 +77,11 @@ public class Room : MonoBehaviour {
 
                 // Top
                 tiles[midWidth, 0] = 0;
-                tiles[midWidth + 1, roomHeight - 1] = 0;
+                tiles[midWidth + 1, 0] = 0;
 
                 // Bottom
-                tiles[roomWidth - 1, 0] = 0;
-                tiles[roomWidth - 1, roomHeight - 1] = 0;
+                tiles[midWidth, roomHeight - 1] = 0;
+                tiles[midWidth + 1, roomHeight - 1] = 0;
 
                 break;
 
@@ -111,7 +110,6 @@ public class Room : MonoBehaviour {
             startPos = pos;
             randomFillPercent = fillPercent;
             pseudoRandom = new System.Random(seed.GetHashCode());
-            borderWallsDirection = new Dictionary<Vector2, BoardCreator.Direction>();
             reigons = new Dictionary<int, HashSet<Vector2>>();
             checkedTiles = new HashSet<Vector2>();
             walls = wallTextures;
@@ -128,7 +126,6 @@ public class Room : MonoBehaviour {
         //FindLargestReigon();
 
         MakeTileArrayFromNodes();
-        MakeBorderWallsArray();
     }
 
     public int[,] GetRoomNodeLayout()
@@ -147,16 +144,6 @@ public class Room : MonoBehaviour {
         return startPos;
     }
 
-    public List<Vector2> GetBorderWalls()
-    {
-        return borderWalls;
-    }
-
-    public Dictionary<Vector2, BoardCreator.Direction> GetBorderDirections()
-    {
-        return borderWallsDirection;
-    }
-
     void SetupTileArray()
     {
         tiles = new int[roomWidth, roomHeight];
@@ -164,16 +151,8 @@ public class Room : MonoBehaviour {
         {
             for (int y = 0; y < roomHeight; y++)
             {
-                if (x == 0 || x == roomWidth - 1 || y == 0 || y == roomHeight - 1)
-                {
-                    //creates a border wall around the room
-                    tiles[x, y] = 1;
-                }
-                else
-                {
-                    //sets the tile to a 1 or 0 randomly depending on the randomFillPercent chosen
-                    tiles[x, y] = (pseudoRandom.Next(0, 100) < randomFillPercent) ? 1 : 0;
-                }
+                // Sets the tile to a 1 or 0 randomly depending on the randomFillPercent chosen
+                tiles[x, y] = (pseudoRandom.Next(0, 100) < randomFillPercent) ? 1 : 0;
             }
         }
     }
@@ -202,9 +181,9 @@ public class Room : MonoBehaviour {
     {
         //List<List<int>> actualTemp = new List<List<int>>();
         actual = new int[roomWidth, roomHeight];
-        for (int x = 0; x < tiles.GetLength(0) - 1; x++)
+        for (int x = 0; x < tiles.GetLength(0); x++)
         {
-            for (int y = 0; y < tiles.GetLength(1) - 1; y++)
+            for (int y = 0; y < tiles.GetLength(1); y++)
             {
                 // -1 because of the called method GetScore()
                 Vector2 v2Pos = new Vector2(x, y);
@@ -215,71 +194,66 @@ public class Room : MonoBehaviour {
 
     }
 
-    private List<Vector2> borderWalls;
-
-    public void UpdateMap(int[,] newMap)
+    // Needs to be updated since each room is being instantiated "upside-down" (-y)
+    int GetScoreFor(Vector2 tlNodePos)
     {
-        tiles = newMap;
-        MakeTileArrayFromNodes();
-        RetryBorderWalls();
-    }
+        // Used to tell me how far in the try the program got (for the catch)
+        int attemptScore = 0;
 
-    void MakeBorderWallsArray()
-    {
-        if (borderWalls != null)
-            return;
-
-        borderWalls = new List<Vector2>();
-        for (int x = (int) startPos.x; x < (int)startPos.x + actual.GetLength(0); x++)
+        // Var setup
+        
+        int tr = 0;
+        int tl = 0;
+        int br = 0;
+        int bl = 0;
+        
+        try
         {
-            for (int y = (int) startPos.y; y < (int)startPos.y + actual.GetLength(1); y++)
-            {
-                Vector2 temp = new Vector2(x, y);
-                //run through marching sq array to find all non-15 and non-0 walls and add them to list
-                switch (actual[x - (int)startPos.x, y - (int)startPos.y])
-                {
-                    case 3:
-                        borderWalls.Add(temp);
-                        borderWallsDirection.Add(temp, BoardCreator.Direction.South);
-                        break;
-                    case 6:
-                        borderWalls.Add(temp);
-                        borderWallsDirection.Add(temp, BoardCreator.Direction.East);
-                        break;
-                    
-                    case 9:
-                        borderWalls.Add(temp);
-                        borderWallsDirection.Add(temp, BoardCreator.Direction.West);
-                        break;
-                    
-                    case 12:
-                        borderWalls.Add(temp);
-                        borderWallsDirection.Add(temp, BoardCreator.Direction.North);
-                        break;
-                    
-                }
+            bl = tiles[(int)tlNodePos.x, (int)tlNodePos.y];
 
+            attemptScore++;
+            br = tiles[(int)tlNodePos.x + 1, (int)tlNodePos.y];
+
+            attemptScore++;
+            tl = tiles[(int)tlNodePos.x, (int)tlNodePos.y + 1];
+
+            attemptScore++;
+            tr = tiles[(int)tlNodePos.x + 1, (int)tlNodePos.y + 1];
+
+        }
+        catch (Exception)
+        {
+            switch (attemptScore)
+            {
+                case 0:
+                    // The coordinate provided was incorrect / out of bounds
+                    return -1;
+
+                case 1:
+                    br = 1;
+                    tr = 1;
+
+                    try
+                    {
+                        // The "y + 1" is still unknown if in bounds
+                        tl = tiles[(int)tlNodePos.x, (int)tlNodePos.y + 1];
+                    }
+                    catch (Exception)
+                    {
+                        tl = 1;
+                    }
+
+                    break;
+
+                case 2:
+
+                    tl = 1;
+                    tr = 1;
+                    break;
             }
         }
 
-    }
-
-    //next function re-tries the above function from the start
-    void RetryBorderWalls()
-    {
-        borderWalls = null;
-        borderWallsDirection = new Dictionary<Vector2, BoardCreator.Direction>();
-        MakeBorderWallsArray();
-    }
-
-    int GetScoreFor(Vector2 tlNodePos)
-    {
-        int bl = tiles[(int)tlNodePos.x, (int)tlNodePos.y];
-        int br = tiles[(int)tlNodePos.x + 1, (int)tlNodePos.y];
-        int tl = tiles[(int)tlNodePos.x, (int)tlNodePos.y + 1];
-        int tr = tiles[(int)tlNodePos.x + 1, (int)tlNodePos.y + 1];
-
-        int[] nodeArray = new int[4] { bl, br, tr, tl };
+        int[] nodeArray = new int[4] { tl, tr, br, bl };
 
         int score = 0;
 
@@ -294,6 +268,17 @@ public class Room : MonoBehaviour {
         }
 
         return score;
+    }
+
+    bool CoordInMapBounds(Vector2 c)
+    {
+        if (c.x < 0 || c.y < 0)
+            return false;
+
+        if (c.x > roomWidth - 1 || c.y > roomHeight - 1)
+            return false;
+
+        return true;
     }
 
     int NeighbourCountOf(Vector2 tilePos)
@@ -463,28 +448,31 @@ public class Room : MonoBehaviour {
             for (int y = 0; y < tiles.GetLength(1); y++)
             {
                 if (tiles[x, y] == 1)
-                    Instantiate(filled, new Vector3(x + offsetX, -(y + offsetY), 0f), Quaternion.identity, transform);
+                {
+                    GameObject tile = Instantiate(filled, new Vector3(x + offsetX, -(y + offsetY), 0f), Quaternion.identity, transform) as GameObject;
+                    tile.name = name + name.GetHashCode();
+                }
 
             }
         }
     }
 
-    void InstantiateTiles(int offsetX, int offsetY)
+    public void InstantiateTiles(int offsetX, int offsetY)
     {
-    for (int x = 0; x < actual.GetLength(0); x++)
+        for (int x = 0; x < actual.GetLength(0); x++)
         {
             for (int y = 0; y < actual.GetLength(1); y++)
             {
                 if (actual[x, y] != 15 && actual[x, y] != 0)
                 {
-                    GameObject tilem = Instantiate(walls[0], new Vector3(x, y, 0f), Quaternion.identity, transform) as GameObject;
+                    GameObject tilem = Instantiate(walls[0], new Vector3(x + offsetX, -(y + offsetY), 0f), Quaternion.identity, transform) as GameObject;
                     tilem.name = "Compensation";
                 }
 
                 if (actual[x, y] != 15)
                 {
-                    GameObject tile = Instantiate(walls[actual[x, y]], new Vector3(x, y, 0f), Quaternion.identity, transform) as GameObject;
-                    tile.name = x + " " + y;
+                    GameObject tile = Instantiate(walls[actual[x, y]], new Vector3(x + offsetX, -(y + offsetY), 0f), Quaternion.identity, transform) as GameObject;
+                    tile.name = actual[x,y].ToString();
                 }
                 //Debug.Log(tile.transform.position);
             }

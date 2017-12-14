@@ -27,11 +27,6 @@ public class BoardCreator : MonoBehaviour {
     private int[,] tiles;
     private System.Random pseudoRandom;
 
-    private Room mainMap;
-
-    private Vector2 entrancePos;
-    private Vector2 endPos;
-
     private GameObject roomHolder;
     
     public void GenerateMap()
@@ -49,6 +44,7 @@ public class BoardCreator : MonoBehaviour {
 
         //generates the cavernous rooms using the Room script
         MakeRooms();
+        MakeBorders();
 
     }
 
@@ -67,7 +63,7 @@ public class BoardCreator : MonoBehaviour {
         System.Random r = pseudoRandom;
 
         Vector2 start = new Vector2(r.Next(0, tiles.GetLength(0)), 0);
-        tiles[(int)start.x, (int)start.y] = 9;
+        tiles[(int)start.x, (int)start.y] = 1;
         bool exitPlaced = false;
         int randomDirection;
         int prevRoom = 0;
@@ -113,7 +109,7 @@ public class BoardCreator : MonoBehaviour {
                 else
                 {
                     exitPlaced = true;
-                    tiles[(int)pointer.x, (int)pointer.y] = 9;
+                    tiles[(int)pointer.x, (int)pointer.y] = currentRoom;
                     break;
                 }
             }
@@ -175,15 +171,15 @@ public class BoardCreator : MonoBehaviour {
         for(int x = 0; x < mapWidth * roomWidth; x += roomWidth)
         {
             pointerY = 0;
-            print("kjdfnsoj");
             for (int y = 0; y < mapHeight * roomHeight; y += roomHeight)
             {
                 Vector2 pos = new Vector2(x, -y);
                 GameObject roomGO = Instantiate(roomTemplate, pos, Quaternion.identity, roomHolder.transform) as GameObject;
+                roomGO.name = tiles[pointerX, pointerY].ToString();
                 Room room = roomGO.GetComponent<Room>();
                 room.SetupRoom(pos, roomWidth, roomHeight, tempSeed, randomFillPercent, marchingSquares);
                 room.MakeEntranceAndExits(tiles[pointerX, pointerY]);
-                room.InstantiateNodes(x,y);
+                room.InstantiateTiles(x,y);
 
                 // Change the seed using the current seed
                 // This ensures the same string of rooms will be made from a single starting seed
@@ -192,6 +188,32 @@ public class BoardCreator : MonoBehaviour {
                 pointerY++;
             }
             pointerX++;
+        }
+    }
+
+    // Makes sure the map has no exits to the outside of the map (void space)
+    void MakeBorders()
+    {
+        for (int x = -1; x < mapWidth * roomWidth; x++)
+        {
+            // Top
+            GameObject tileA = Instantiate(wall, new Vector3(x, 1, 0f), Quaternion.identity, transform) as GameObject;
+            tileA.name = "Border: " + tileA.GetHashCode();
+
+            // Bottom
+            GameObject tileB = Instantiate(wall, new Vector3(x, -(mapHeight * roomHeight), 0f), Quaternion.identity, transform) as GameObject;
+            tileB.name = "Border: " + tileB.GetHashCode();
+        }
+
+        for (int y = -1; y < mapHeight * roomHeight; y++)
+        {
+            // Left
+            GameObject tileA = Instantiate(wall, new Vector3(-1, -y, 0f), Quaternion.identity, transform) as GameObject;
+            tileA.name = "Border: " + tileA.GetHashCode();
+
+            // Right
+            GameObject tileB = Instantiate(wall, new Vector3(mapWidth * roomWidth, -y, 0f), Quaternion.identity, transform) as GameObject;
+            tileB.name = "Border: " + tileB.GetHashCode();
         }
     }
 
