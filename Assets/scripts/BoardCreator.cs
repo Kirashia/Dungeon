@@ -92,23 +92,23 @@ public class BoardCreator : MonoBehaviour {
         GenerateMapTemplate();
 
         //generates a full (all wall) larger map
-        mainMapGO = Instantiate(roomTemplate, Vector3.zero, Quaternion.identity) as GameObject; //gameobject for the main map
-        mainMap = mainMapGO.GetComponent<Room>();
-        mainMap.SetupRoom(Vector3.zero, mapWidth, mapHeight, seed, 100);
-        mainMap.name = "Main map";
-        tiles = mainMap.GetRoomNodeLayout();
-        borderWalls = mainMap.GetBorderWalls();
+        //mainMapGO = Instantiate(roomTemplate, Vector3.zero, Quaternion.identity) as GameObject; //gameobject for the main map
+        //mainMap = mainMapGO.GetComponent<Room>();
+        //mainMap.SetupRoom(Vector3.zero, mapWidth, mapHeight, seed, 100);
+        //mainMap.name = "Main map";
+        //tiles = mainMap.GetRoomNodeLayout();
+        //borderWalls = mainMap.GetBorderWalls();
 
         //generates the cavernous rooms using the Room script
         NewMakeRooms();
 
-        mainMap.FindLargestReigon(); //makes sure all parts of the map are reachable
+        //mainMap.FindLargestReigon(); //makes sure all parts of the map are reachable
 
-        for (int i = 0; i < smoothness; i++)
-            mainMap.SmoothMap();
+        //for (int i = 0; i < smoothness; i++)
+        //    mainMap.SmoothMap();
 
         //instantiation
-        InstantiateNodes();       //for debugging
+        //InstantiateNodes();       //for debugging
         //UpdateBorderWalls();
         //InstantiateBorders();
         //InstantiateTiles();       //instantiate the tiles one at a time, until the map is fully instantiated
@@ -209,7 +209,7 @@ public class BoardCreator : MonoBehaviour {
             if (dy == 1 && pointer.y == 3)
             {
                 exitPlaced = true;
-                tiles[(int)pointer.x, (int)pointer.y] = 9;
+                tiles[(int)pointer.x, (int)pointer.y] = currentRoom;
                 break;
             }
 
@@ -282,16 +282,29 @@ public class BoardCreator : MonoBehaviour {
     void NewMakeRooms()
     {
         tempSeed = seed;
+        int pointerX = 0;
+        int pointerY = 0;
+
         for(int x = 0; x < mapWidth * roomWidth; x += roomWidth)
         {
+            pointerY = 0;
+            print("kjdfnsoj");
             for (int y = 0; y < mapHeight * roomHeight; y += roomHeight)
             {
-                Vector2 pos = new Vector2(x, y);
+                Vector2 pos = new Vector2(x, -y);
                 GameObject roomGO = Instantiate(roomTemplate, pos, Quaternion.identity, roomHolder.transform) as GameObject;
                 Room room = roomGO.GetComponent<Room>();
                 room.SetupRoom(pos, roomWidth, roomHeight, tempSeed, randomFillPercent);
-                room.MakeEntranceAndExits(tiles[x, y]);
+                room.MakeEntranceAndExits(tiles[pointerX, pointerY]);
+                room.InstantiateNodes(x,y);
+
+                // Change the seed using the current seed
+                // This ensures the same string of rooms will be made from a single starting seed
+                tempSeed = tempSeed.GetHashCode().ToString();
+
+                pointerY++;
             }
+            pointerX++;
         }
     }
 
@@ -581,6 +594,7 @@ public class BoardCreator : MonoBehaviour {
     void InstantiateNodes()
     {
         //tiles = mainMap.GetRoomNodeLayout();
+        Debug.Log("x");
         for (int x = 0; x < tiles.GetLength(0); x++)
         {
             for (int y = 0; y < tiles.GetLength(1); y++)
@@ -604,5 +618,10 @@ public class BoardCreator : MonoBehaviour {
         { 
             Instantiate(filled, x, Quaternion.identity, wallHolder.transform);
         }
+    }
+
+    void InstantiateRooms()
+    {
+
     }
 }

@@ -16,6 +16,8 @@ public class Room : MonoBehaviour {
     public Vector2 entrancePos;
     public Vector2 endPos;
 
+    public GameObject wall;
+
     private int[,] tiles;
     private int[,] actual;
     private bool isStartRoomFlag;
@@ -466,5 +468,20 @@ public class Room : MonoBehaviour {
         }
 
         return surrounding.ToArray();
+    }
+
+    public void InstantiateNodes(int offsetX, int offsetY)
+    {
+        //tiles = mainMap.GetRoomNodeLayout();
+        Debug.Log("x");
+        for (int x = 0; x < tiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < tiles.GetLength(1); y++)
+            {
+                if (tiles[x, y] == 1)
+                    Instantiate(filled, new Vector3(x + offsetX, -(y + offsetY), 0f), Quaternion.identity, transform);
+
+            }
+        }
     }
 }
