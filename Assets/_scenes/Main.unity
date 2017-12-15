@@ -248,13 +248,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b6e9e7ff292ff4db2d17594dfa4cd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapWidth: 4
-  mapHeight: 4
+  mapWidth: 16
+  mapHeight: 16
   seed: 0.02
   tempSeed: 
   useRandomSeed: 0
   smoothness: 5
-  randomFillPercent: 52
+  randomFillPercent: 55
   wall: {fileID: 1762570467653278, guid: f6812553ec2a7fe4a9596b102d2dbd4c, type: 2}
   floor: {fileID: 1961553309645668, guid: fcec5f2c3460e3c419de13b5c7497986, type: 2}
   filled: {fileID: 1356210442151772, guid: 14d6b152f6c5fa34d9066cfaeb31aafe, type: 2}
@@ -284,8 +284,8 @@ MonoBehaviour:
     type: 2}
   startTile: {fileID: 0}
   endTile: {fileID: 0}
-  roomHeight: 50
-  roomWidth: 50
+  roomHeight: 100
+  roomWidth: 100
   startLocation: {x: 0, y: 0}
   endLocation: {x: 0, y: 0}
 --- !u!1 &2068369964 stripped
