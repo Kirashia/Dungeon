@@ -104,9 +104,9 @@ public class BoardCreator : MonoBehaviour {
                 randomDirection = r.Next(1, 6);
             }
 
-            if (((randomDirection == 1 || randomDirection == 2) && (int)pointer.x == 0) || ((randomDirection == 3 || randomDirection == 4) && (int)pointer.x == 3))
+            if (((randomDirection == 1 || randomDirection == 2) && (int)pointer.x == 0) || ((randomDirection == 3 || randomDirection == 4) && (int)pointer.x == mapWidth - 1))
             {
-                if (pointer.y != 3)
+                if (pointer.y < mapHeight - 1)
                 {
                     dy = 1;
                     currentRoom = (prevRoom == 2) ? 4 : 2;
@@ -148,7 +148,7 @@ public class BoardCreator : MonoBehaviour {
                     break;
             }
 
-            if (dy == 1 && pointer.y == 3)
+            if (dy == 1 && pointer.y >= mapHeight - 1)
             {
                 exitPlaced = true;
                 tiles[(int)pointer.x, (int)pointer.y] = currentRoom;
