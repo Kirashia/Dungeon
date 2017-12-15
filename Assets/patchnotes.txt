@@ -1,3 +1,6 @@
+15/12/2017, 00:09 - 	map generation completed, barre start and end tiles, and item placement
+			minor error (leave for now) where exits between rooms leave a small line in the walls
+
 14/12/2017, 17:09 -	fixed marching sq errors
 			added map border
 			started work on corridors (research)

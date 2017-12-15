@@ -25,6 +25,8 @@ public class BoardCreator : MonoBehaviour {
     public int roomWidth;
 
     private int[,] tiles;
+    public Vector2 startLocation;
+    public Vector2 endLocation;
     private System.Random pseudoRandom;
 
     private GameObject roomHolder;
@@ -48,6 +50,11 @@ public class BoardCreator : MonoBehaviour {
 
     }
 
+    public Vector2 GetPlayerStartLocation()
+    {
+        return Vector2.Scale(startLocation, new Vector2(roomWidth, roomHeight));
+    }
+
     void GenerateMapTemplate()
     {
         tiles = new int[mapWidth, mapHeight];
@@ -64,6 +71,7 @@ public class BoardCreator : MonoBehaviour {
 
         Vector2 start = new Vector2(r.Next(0, tiles.GetLength(0)), 0);
         tiles[(int)start.x, (int)start.y] = 1;
+        startLocation = start;
         bool exitPlaced = false;
         int randomDirection;
         int prevRoom = 0;
@@ -109,6 +117,7 @@ public class BoardCreator : MonoBehaviour {
                 else
                 {
                     exitPlaced = true;
+                    endLocation = pointer;
                     tiles[(int)pointer.x, (int)pointer.y] = currentRoom;
                     break;
                 }
@@ -143,6 +152,7 @@ public class BoardCreator : MonoBehaviour {
             {
                 exitPlaced = true;
                 tiles[(int)pointer.x, (int)pointer.y] = currentRoom;
+                endLocation = pointer;
                 break;
             }
 
@@ -164,6 +174,8 @@ public class BoardCreator : MonoBehaviour {
 
     void MakeRooms()
     {
+        // Debugging
+
         tempSeed = seed;
         int pointerX = 0;
         int pointerY = 0;
@@ -173,13 +185,22 @@ public class BoardCreator : MonoBehaviour {
             pointerY = 0;
             for (int y = 0; y < mapHeight * roomHeight; y += roomHeight)
             {
-                Vector2 pos = new Vector2(x, -y);
+                Vector2 pos = new Vector2(x, y);
                 GameObject roomGO = Instantiate(roomTemplate, pos, Quaternion.identity, roomHolder.transform) as GameObject;
                 roomGO.name = tiles[pointerX, pointerY].ToString();
                 Room room = roomGO.GetComponent<Room>();
-                room.SetupRoom(pos, roomWidth, roomHeight, tempSeed, randomFillPercent, marchingSquares);
-                room.MakeEntranceAndExits(tiles[pointerX, pointerY]);
-                room.InstantiateTiles(x,y);
+                room.SetupRoom(pos, roomWidth, roomHeight, tempSeed, randomFillPercent, marchingSquares, tiles[pointerX, pointerY]);
+
+                if (new Vector2(pointerX,pointerY) == startLocation)
+                {
+                    room.MakeStartRoom();
+                }
+                else if (new Vector2(pointerX, pointerY) == endLocation)
+                {
+                    room.MakeEndRoom();
+                }
+
+                room.InstantiateTiles(x, y);
 
                 // Change the seed using the current seed
                 // This ensures the same string of rooms will be made from a single starting seed

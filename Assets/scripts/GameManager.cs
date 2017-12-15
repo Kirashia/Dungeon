@@ -22,6 +22,7 @@ public class GameManager : MonoBehaviour {
        
         boardCreator = GetComponent<BoardCreator>();
         boardCreator.GenerateMap();
+        player.transform.position = boardCreator.GetPlayerStartLocation();
         //playerController = GetComponent<PlayerController>();
 	}
 	

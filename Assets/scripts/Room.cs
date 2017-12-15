@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Room : MonoBehaviour {
@@ -20,6 +18,9 @@ public class Room : MonoBehaviour {
 
     private int[,] tiles;
     private int[,] actual;
+    private List<List<Vector2>> floorTiles;
+    private List<Vector2> exitTiles;
+    public List<Vector2[]> connections;
     private bool isStartRoomFlag;
     private bool isEndRoomFlag;
     private HashSet<Vector2> checkedTiles;
@@ -62,45 +63,61 @@ public class Room : MonoBehaviour {
         {
             case 1:
                 // Sides
-                tiles[0, midHeight] = 0;
-                tiles[0, midHeight + 1] = 0;
-                tiles[roomWidth - 1, midHeight] = 0;
-                tiles[roomWidth - 1, midHeight + 1] = 0;
+
+                DrawCircleAround(new Vector2(0, midHeight), 3, true);
+                DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 3, true);
+
+                //tiles[0, midHeight] = 0;
+                //tiles[0, midHeight + 1] = 0;
+                //tiles[roomWidth - 1, midHeight] = 0;
+                //tiles[roomWidth - 1, midHeight + 1] = 0;
                 break;
 
             case 2:
                 // Sides
-                tiles[0, midHeight] = 0;
-                tiles[0, midHeight + 1] = 0;
-                tiles[roomWidth - 1, midHeight] = 0;
-                tiles[roomWidth - 1, midHeight + 1] = 0;
+                DrawCircleAround(new Vector2(0, midHeight), 3, true);
+                DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 3, true);
+
+                //tiles[0, midHeight] = 0;
+                //tiles[0, midHeight + 1] = 0;
+                //tiles[roomWidth - 1, midHeight] = 0;
+                //tiles[roomWidth - 1, midHeight + 1] = 0;
 
                 // Top
-                tiles[midWidth, 0] = 0;
-                tiles[midWidth + 1, 0] = 0;
+                DrawCircleAround(new Vector2(midWidth, 0), 3, true);
+
+                //tiles[midWidth, 0] = 0;
+                //tiles[midWidth + 1, 0] = 0;
 
                 // Bottom
-                tiles[midWidth, roomHeight - 1] = 0;
-                tiles[midWidth + 1, roomHeight - 1] = 0;
+                DrawCircleAround(new Vector2(midWidth, roomHeight - 1), 3, true);
+
+                //tiles[midWidth, roomHeight - 1] = 0;
+                //tiles[midWidth + 1, roomHeight - 1] = 0;
 
                 break;
 
             case 3:
                 // Sides 
-                tiles[0, midHeight] = 0;
-                tiles[0, midHeight + 1] = 0;
-                tiles[roomWidth - 1, midHeight] = 0;
-                tiles[roomWidth - 1, midHeight + 1] = 0;
+                DrawCircleAround(new Vector2(0, midHeight), 3, true);
+                DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 3, true);
+
+                //tiles[0, midHeight] = 0;
+                //tiles[0, midHeight + 1] = 0;
+                //tiles[roomWidth - 1, midHeight] = 0;
+                //tiles[roomWidth - 1, midHeight + 1] = 0;
 
                 // Top
-                tiles[midWidth, 0] = 0;
-                tiles[midWidth + 1, roomHeight - 1] = 0;
+                DrawCircleAround(new Vector2(midWidth, 0), 3, true);
+
+                //tiles[midWidth, 0] = 0;
+                //tiles[midWidth + 1, 0] = 0;
                 break;
 
         }
     }
 
-    public void SetupRoom(Vector3 pos, int width, int height, string tempSeed, int fillPercent, GameObject[] wallTextures)
+    public void SetupRoom(Vector3 pos, int width, int height, string tempSeed, int fillPercent, GameObject[] wallTextures, int direciton)
     {
         //prelim variable setup
         {
@@ -113,6 +130,9 @@ public class Room : MonoBehaviour {
             reigons = new Dictionary<int, HashSet<Vector2>>();
             checkedTiles = new HashSet<Vector2>();
             walls = wallTextures;
+            floorTiles = new List<List<Vector2>>();
+            connections = new List<Vector2[]>();
+            exitTiles = new List<Vector2>();
         }
 
         //map generation
@@ -123,9 +143,18 @@ public class Room : MonoBehaviour {
             SmoothMap();
         }
 
-        //FindLargestReigon();
+        // Adds a 2x1 hole to each side corresponding to the correct direction
+        MakeEntranceAndExits(direciton);
 
-        MakeTileArrayFromNodes();
+        FindReigons();
+        ConnectReigons();
+        DrawConnections();
+
+        // A couple more smoothing iterations to hopefully remove random obstacles
+        for (int n = 0; n < 2; n++)
+        {
+            SmoothMap();
+        }
     }
 
     public int[,] GetRoomNodeLayout()
@@ -199,7 +228,7 @@ public class Room : MonoBehaviour {
     {
         // Used to tell me how far in the try the program got (for the catch)
         int attemptScore = 0;
-
+        int boundaryScore = (exitTiles.Contains(tlNodePos)) ?  0 : 1;
         // Var setup
         
         int tr = 0;
@@ -221,7 +250,7 @@ public class Room : MonoBehaviour {
             tr = tiles[(int)tlNodePos.x + 1, (int)tlNodePos.y + 1];
 
         }
-        catch (Exception)
+        catch (System.Exception)
         {
             switch (attemptScore)
             {
@@ -230,25 +259,25 @@ public class Room : MonoBehaviour {
                     return -1;
 
                 case 1:
-                    br = 1;
-                    tr = 1;
+                    br = boundaryScore;
+                    tr = boundaryScore;
 
                     try
                     {
                         // The "y + 1" is still unknown if in bounds
                         tl = tiles[(int)tlNodePos.x, (int)tlNodePos.y + 1];
                     }
-                    catch (Exception)
+                    catch (System.Exception)
                     {
-                        tl = 1;
+                        tl = boundaryScore;
                     }
 
                     break;
 
                 case 2:
 
-                    tl = 1;
-                    tr = 1;
+                    tl = boundaryScore;
+                    tr = boundaryScore;
                     break;
             }
         }
@@ -308,19 +337,15 @@ public class Room : MonoBehaviour {
         return score;
     }
 
-    //function finds the largest reigon on the map 
-    //then fills the smaller ones with wall tiles 
-    //to make all parts of the map reachable
-    public void FindLargestReigon()
+    // Function finds all the reigons on the map
+    // Then puts them in a 2D list
+    public void FindReigons()
     {
-        reigons = new Dictionary<int, HashSet<Vector2>>();
         checkedTiles = new HashSet<Vector2>();
-        int highestReigonSize = 0;
         for (int x = 0; x < tiles.GetLength(0); x++)
         {
             for (int y = 0; y < tiles.GetLength(1); y++)
             {
-                //Debug.Log(checkedTiles.Contains(new Vector2(x, y)));
                 if (tiles[x, y] != 0)
                     checkedTiles.Add(new Vector2(x, y));
                 else if (!checkedTiles.Contains(new Vector2(x, y)))
@@ -329,63 +354,26 @@ public class Room : MonoBehaviour {
                 }
             }
         }
-
-        //loop finds the largest reigon by size (key = size of reigon)
-        foreach (KeyValuePair<int, HashSet<Vector2>> selectedReigon in reigons)
-        {
-            //if (name == "Main map")
-            //    Debug.Log("reigon[" + selectedReigon.Key + "] = " + selectedReigon.Value.ToString());
-
-            if (selectedReigon.Key > highestReigonSize)
-                highestReigonSize = selectedReigon.Key;
-        }
-
-        if (highestReigonSize == 0)
-        {
-            return;
-        }
-
-
-
-        //places wall nodes everywhere except on tiles in the largest reigon size
-        HashSet<Vector2> largestReigon = reigons[highestReigonSize];
-
-        //if (isStartRoom)
-        //    entrancePos =  pseudoRandom.Next(0, largestReigon.Count - 1);
-
-        for (int x = 0; x < tiles.GetLength(0); x++)
-        {
-            for (int y = 0; y < tiles.GetLength(1); y++)
-            {
-                Vector2 tempPos = new Vector2(x, y);
-                if (!largestReigon.Contains(tempPos)) //not in the largest reigon
-                {
-                    tiles[x, y] = 1; //changes the node array
-                } else if (isStartRoomFlag)
-                {
-                    entrancePos = new Vector2(x, y);
-                    isStartRoomFlag = false;
-                } else if (isEndRoomFlag)
-                {
-                    endPos = new Vector2(x, y);
-                    isEndRoomFlag = false;
-                }
-
-            }
-        }
-
     }
 
     void UpdateReigonDictionary(int x, int y)
     {
         Vector2 startPos = new Vector2(x, y);
         Queue<Vector2> tileQueue = new Queue<Vector2>();
-        HashSet<Vector2> tileList = new HashSet<Vector2>(); //hashset used because it is faster for .Contains() operations
+        List<Vector2> tileList = new List<Vector2>();
 
         //loop randomly selects a tile which is a floor tile (a value of 0)
         while (tiles[(int) startPos.x, (int) startPos.y] != 0)
         {
-            startPos = new Vector3(pseudoRandom.Next(1, roomWidth - 1), pseudoRandom.Next(1, roomHeight - 1), 0);
+            if (CoordInMapBounds(startPos))
+            {
+                startPos.x++;
+            }
+            else
+            {
+                startPos.y++;
+                startPos.x = 0;
+            }
         }
 
         //creates queue with start tile inside
@@ -408,8 +396,9 @@ public class Room : MonoBehaviour {
                 tileList.Add(neighborPos);
             }
         }
-        //adds list to an array which holds 
-        reigons[tileList.Count] = tileList;
+        
+        // Adds reigon to tile list
+        floorTiles.Add(tileList);
     }
 
     Vector2[] GetAdjacentTilesOf(Vector2 tilePos, int value)
@@ -425,9 +414,9 @@ public class Room : MonoBehaviour {
                 //the actual position on the map
                 int n = (int)tilePos.x + x;
                 int m = (int)tilePos.y + y;
-
+                
                 //if the tile is on a diagonal or is selected tile
-                if (x == y || x == -y)
+                if (x == y || x == -y || !CoordInMapBounds(new Vector2(n,m)))
                     continue;
 
                 //will only return if the value matches the specified value
@@ -437,6 +426,209 @@ public class Room : MonoBehaviour {
         }
 
         return surrounding.ToArray();
+    }
+
+    void ConnectReigons()
+    {
+        List<List<Vector2>> reigons = floorTiles;
+
+        // Loop finds the shortest distance between two tiles in different reigons
+        // Then adds all the tiles in one reigon to the first index
+        // And removes the added reigons from the list
+        Vector2 closestTile;
+
+        while (reigons.Count > 1)
+        {
+            float minLength = -1f;
+            float[] minIndex = new float[] { 0, 0, 0 }; // A blank slate
+            Vector2 startTile = reigons[0][0];
+
+
+            // Finds tile in connected reigon that's closest to an unconnected reigon
+            foreach(Vector2 tile in reigons[0])
+            {
+                float[] index = FindClosestTileTo(tile, reigons);
+                if (minLength == -1f || index[2] < minLength)
+                {
+                    startTile = tile;
+                    minIndex = index;
+                    minLength = index[2];
+                }
+            }
+
+            // Assign variables to closest tile's values
+            closestTile = reigons[(int)minIndex[0]][(int)minIndex[1]];
+            minLength = minIndex[2];
+
+            reigons[0].AddRange(reigons[(int)minIndex[0]]); // Adds all the selected reigon to the connected part of the 2D array
+            reigons.RemoveAt((int)minIndex[0]);             // Remove the reigon from the unconnected part of the 2D array
+
+            connections.Add(new Vector2[] {(startTile), closestTile});
+        }
+    }
+
+    void DrawConnections()
+    {
+        foreach(Vector2[] pair in connections)
+        {
+            DrawCorridor(pair[0], pair[1]);
+        }
+    }
+
+    List<Vector2> GetTilesOnLine(Vector2 start, Vector2 end)
+    {
+        List<Vector2> line = new List<Vector2>();
+
+        int x = (int) start.x;
+        int y = (int) start.y;
+
+        int dx = (int)end.x - x;
+        int dy = (int)end.y - y;
+
+        int step = (int)Mathf.Sign(dx);
+        int gradientStep = (int)Mathf.Sign(dy);
+
+        bool inverted = false;
+        int longest = Mathf.Abs(dx);
+        int shortest = Mathf.Abs(dy);
+
+        // Sometimes the line will be more vertical, this adapts the algorithm to make it easier
+        if (longest < shortest)
+        {
+            inverted = true;
+            longest = Mathf.Abs(dy);
+            shortest = Mathf.Abs(dx);
+
+            step = (int)Mathf.Sign(dy);
+            gradientStep = (int)Mathf.Sign(dx);
+        }
+
+        int gradientAccumulation = longest / 2;
+        
+        for (int n = 0; n < longest; n++)
+        {
+            line.Add(new Vector2(x, y));
+
+            if (inverted)
+                y += step;
+            
+            else
+                x += step;
+
+            gradientAccumulation += shortest;
+
+            if (gradientAccumulation >= longest)
+            {
+                if (inverted)
+                    x += gradientStep;
+
+                else
+                    y += gradientStep;
+
+                gradientAccumulation -= longest;
+            }
+            
+        }
+
+        return line;
+    }
+
+    void DrawCorridor(Vector2 start, Vector2 end)
+    {
+        List<Vector2> line = GetTilesOnLine(start, end);
+        foreach(Vector2 tile in line)
+        {
+            DrawCircleAround(tile, 1);
+        }
+    }
+
+    void DrawCircleAround(Vector2 point, int radius)
+    {
+        List<Vector2> debugList = new List<Vector2>();
+        for (int x = -radius; x <= radius; x++)
+        {
+            for (int y = -radius; y <= radius; y++)
+            {
+                // Lies in or on the circle
+                if (x*x + y*y <= radius*radius)
+                {
+                    int drawX = (int)point.x + x;
+                    int drawY = (int)point.y + y;
+
+                    if (CoordInMapBounds(new Vector2(drawX, drawY)))
+                    {
+                        // Make the point a floor tile
+                        tiles[drawX, drawY] = 0;
+                        debugList.Add(new Vector2(drawX, drawY));
+                    }
+                }
+            }
+        }
+
+        floorTiles.Add(debugList);
+    }
+    
+    // Overload specifically for exits to the room
+    void DrawCircleAround(Vector2 point, int radius, bool isExit)
+    {
+        for (int x = -radius; x <= radius; x++)
+        {
+            for (int y = -radius; y <= radius; y++)
+            {
+                // Lies in or on the circle
+                if (x * x + y * y <= radius * radius)
+                {
+                    int drawX = (int)point.x + x;
+                    int drawY = (int)point.y + y;
+
+                    if (CoordInMapBounds(new Vector2(drawX, drawY)))
+                    {
+                        // Make the point a floor tile
+                        tiles[drawX, drawY] = 0;
+                        exitTiles.Add(new Vector2(drawX, drawY));
+                    }
+                }
+            }
+        }
+    }
+
+
+    //private void OnDrawGizmos()
+    //{
+    //    foreach(Vector2[] pairs in connections)
+    //    {
+    //        Gizmos.color = Color.green;
+    //        Gizmos.DrawLine(pairs[0] + (Vector2)startPos, pairs[1] + (Vector2)startPos);
+    //    }
+    //}
+
+    float[] FindClosestTileTo(Vector2 pos, List<List<Vector2>> array)
+    {
+        // Key:
+        //      0 - x coord
+        //      1 - y coord
+        //      2 - distance using sqrMagnitude
+
+        float[] index = new float[3];
+        index[2] = -1;
+
+        // For loop starts from 0 so as not to include the main reigon
+        // That are already conencted
+        for (int x = 1; x < array.Count; x++)
+        {
+            for (int y = 0; y < array[x].Count; y++)
+            {
+                Vector2 s = array[x][y];
+                if (index[2] == -1 || (pos - s).sqrMagnitude < index[2])
+                {
+                    index[0] = x;
+                    index[1] = y;
+                    index[2] = (pos - s).sqrMagnitude;
+                }
+            }
+        }
+
+        return index;
     }
 
     public void InstantiateNodes(int offsetX, int offsetY)
@@ -449,7 +641,7 @@ public class Room : MonoBehaviour {
             {
                 if (tiles[x, y] == 1)
                 {
-                    GameObject tile = Instantiate(filled, new Vector3(x + offsetX, -(y + offsetY), 0f), Quaternion.identity, transform) as GameObject;
+                    GameObject tile = Instantiate(filled, new Vector3(x + offsetX, (y + offsetY), 0f), Quaternion.identity, transform) as GameObject;
                     tile.name = name + name.GetHashCode();
                 }
 
@@ -459,6 +651,9 @@ public class Room : MonoBehaviour {
 
     public void InstantiateTiles(int offsetX, int offsetY)
     {
+        // Makes sure the tile array is up to date
+        MakeTileArrayFromNodes();
+
         for (int x = 0; x < actual.GetLength(0); x++)
         {
             for (int y = 0; y < actual.GetLength(1); y++)

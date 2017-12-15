@@ -166,6 +166,16 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 50609939552021080, guid: fcafdb4bee87ad24f8c97bd40197b85d,
+        type: 2}
+      propertyPath: m_SleepingMode
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 50609939552021080, guid: fcafdb4bee87ad24f8c97bd40197b85d,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 4
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fcafdb4bee87ad24f8c97bd40197b85d, type: 2}
   m_IsPrefabParent: 0
@@ -198,7 +208,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   boardCreator: {fileID: 0}
-  player: {fileID: 0}
+  player: {fileID: 2068369964}
 --- !u!4 &1243786954
 Transform:
   m_ObjectHideFlags: 0
@@ -259,8 +269,8 @@ MonoBehaviour:
     type: 2}
   startTile: {fileID: 0}
   endTile: {fileID: 0}
-  roomHeight: 25
-  roomWidth: 25
+  roomHeight: 50
+  roomWidth: 50
 --- !u!1 &2068369964 stripped
 GameObject:
   m_PrefabParentObject: {fileID: 1237411502322272, guid: fcafdb4bee87ad24f8c97bd40197b85d,
