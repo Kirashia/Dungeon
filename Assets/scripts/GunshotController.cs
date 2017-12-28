@@ -31,38 +31,38 @@ public class GunshotController : MovingObject {
             //print(facingDirection);
         }
 
-        Vector2 velocity = new Vector2(0, 0);
+        Vector3 velocity = new Vector3(0, 0);
 
         switch (direction)
         {
             case FacingDirection.North:
-                velocity = new Vector2(0, moveSpeed);
+                velocity = new Vector3(0, 0, moveSpeed);
                 break;
             case FacingDirection.South:
-                velocity = new Vector2(0, -moveSpeed);
+                velocity = new Vector3(0,0, -moveSpeed);
                 break;
             case FacingDirection.East:
-                velocity = new Vector2(moveSpeed, 0);
+                velocity = new Vector3(moveSpeed, 0, 0);
                 break;
             case FacingDirection.West:
-                velocity = new Vector2(-moveSpeed, 0);
+                velocity = new Vector3(-moveSpeed, 0, 0);
                 break;
             case FacingDirection.NorthEast:
-                velocity = new Vector2(moveSpeed / 2, moveSpeed / 2);
+                velocity = new Vector3(moveSpeed / 2,0, moveSpeed / 2);
                 break;
             case FacingDirection.NorthWest:
-                velocity = new Vector2(-moveSpeed / 2, moveSpeed / 2);
+                velocity = new Vector3(-moveSpeed / 2,0, moveSpeed / 2);
                 break;
             case FacingDirection.SouthEast:
-                velocity = new Vector2(moveSpeed, -moveSpeed / 2);
+                velocity = new Vector3(moveSpeed, 0,-moveSpeed / 2);
                 break;
             case FacingDirection.SouthWest:
-                velocity = new Vector2(-moveSpeed / 2, -moveSpeed / 2);
+                velocity = new Vector3(-moveSpeed / 2, 0,-moveSpeed / 2);
                 break;
 
         }
 
-        rb2d.velocity = velocity;
+        transform.Translate(velocity);
     }
 
     void OnTriggerEnter2D(Collider2D other)
