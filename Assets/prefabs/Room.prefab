@@ -55,5 +55,28 @@ MonoBehaviour:
   roomWidth: 10
   seed: plswurkmofo
   startPos: {x: 1, y: 1, z: 1}
-  filled: {fileID: 1356210442151772, guid: 14d6b152f6c5fa34d9066cfaeb31aafe, type: 2}
+  entranceTile: {fileID: 1356210442151772, guid: 14d6b152f6c5fa34d9066cfaeb31aafe,
+    type: 2}
+  exitTile: {fileID: 1183251852118828, guid: c4573024f45b6764b9ce9e1ab8618853, type: 2}
   randomFillPercent: 45
+  isStartRoom: 0
+  isEndRoom: 0
+  entrancePos: {x: 0, y: 0}
+  endPos: {x: 0, y: 0}
+  walls:
+  - {fileID: 1632778043627966, guid: fb8517749de7edc4384c3e0247a0d575, type: 2}
+  - {fileID: 1341738279267068, guid: 39a6934bf76fa41428a7f82cb71a7c9a, type: 2}
+  - {fileID: 1207983514622466, guid: f485f6ed209ae73449b8bbf4a285e9fa, type: 2}
+  - {fileID: 1399281615841762, guid: 09e3f6a9a91f27d48a0562a4784a94c6, type: 2}
+  - {fileID: 1711316168140002, guid: 159f613c04bb1664984c9ad9e28d26df, type: 2}
+  - {fileID: 1435875000704172, guid: 539dbe8b7949b7148a17e41d477354e2, type: 2}
+  - {fileID: 1485699641828270, guid: afc0c550c77409f4f9a5af95b836472f, type: 2}
+  - {fileID: 1931999828342494, guid: d8555f4bc9dd6da4b8f0650949d93766, type: 2}
+  - {fileID: 1961834784673658, guid: bb9e01fce551f72428f6ec99093b5281, type: 2}
+  - {fileID: 1764173407855106, guid: 518fcfc2d1506324b969a50b46e231ed, type: 2}
+  - {fileID: 1165583130834710, guid: 0ca209d2700ce664ebd944384e17672e, type: 2}
+  - {fileID: 1479110311898748, guid: abe9d9767c78cec4194a0cbc437ed73e, type: 2}
+  - {fileID: 1671189853057394, guid: 70f36341421b6174096358c7b444e54f, type: 2}
+  - {fileID: 1073411190069658, guid: 09ce497dd25f5ec4facc1107106aaed7, type: 2}
+  - {fileID: 1309188174625772, guid: dcd7f21f96669cc40b13a9bc4aa73fe1, type: 2}
+  - {fileID: 1762570467653278, guid: f6812553ec2a7fe4a9596b102d2dbd4c, type: 2}

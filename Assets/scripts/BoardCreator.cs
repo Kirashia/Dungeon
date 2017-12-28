@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,7 +31,8 @@ public class BoardCreator : MonoBehaviour {
     private System.Random pseudoRandom;
 
     private GameObject roomHolder;
-    
+    private List<Room> rooms;
+
     public void GenerateMap()
     {
         if (seed == null)
@@ -41,6 +43,7 @@ public class BoardCreator : MonoBehaviour {
 
         roomHolder = new GameObject("Room Holder");
         pseudoRandom = new System.Random(seed.GetHashCode());
+        rooms = new List<Room>();
 
         GenerateMapTemplate();
 
@@ -48,6 +51,7 @@ public class BoardCreator : MonoBehaviour {
         MakeRooms();
         MakeBorders();
 
+        ConnectRooms();
     }
 
     public Vector2 GetPlayerStartLocation()
@@ -186,11 +190,11 @@ public class BoardCreator : MonoBehaviour {
             for (int y = 0; y < mapHeight * roomHeight; y += roomHeight)
             {
                 Vector2 pos = new Vector2(x, y);
-                GameObject roomGO = Instantiate(roomTemplate, pos, Quaternion.identity, roomHolder.transform) as GameObject;
+                GameObject roomGO = Instantiate(roomTemplate, new Vector2(pos.x, -pos.y), Quaternion.identity, roomHolder.transform) as GameObject;
                 roomGO.name = tiles[pointerX, pointerY].ToString();
                 Room room = roomGO.GetComponent<Room>();
-                room.SetupRoom(pos, roomWidth, roomHeight, tempSeed, randomFillPercent, marchingSquares, tiles[pointerX, pointerY]);
 
+                // Sets flag variables which slightly change the setup of the room
                 if (new Vector2(pointerX,pointerY) == startLocation)
                 {
                     room.MakeStartRoom();
@@ -200,7 +204,12 @@ public class BoardCreator : MonoBehaviour {
                     room.MakeEndRoom();
                 }
 
-                room.InstantiateTiles(x, y);
+                room.SetupRoom(pos, roomWidth, roomHeight, tempSeed, randomFillPercent, marchingSquares, tiles[pointerX, pointerY]);
+
+                rooms.Add(room);
+
+                //room.InstantiateTiles(x, y);
+                //room.InstantiateNodes(x, y);
 
                 // Change the seed using the current seed
                 // This ensures the same string of rooms will be made from a single starting seed
@@ -212,28 +221,87 @@ public class BoardCreator : MonoBehaviour {
         }
     }
 
+    void ConnectRooms()
+    {
+        int[,] map = new int[mapWidth * roomWidth, mapHeight * roomHeight];
+        int count = 0;
+
+        for (int n = 0; n < mapWidth * roomWidth; n += roomWidth)
+        {
+            for (int m = 0; m < mapHeight * roomHeight; m += roomHeight)
+            {
+                int[,] roomLayout = rooms[count].GetRoomNodeLayout();
+
+                for (int x = 0; x < roomLayout.GetLength(0); x++)
+                {
+                    for (int y = 0; y < roomLayout.GetLength(1); y++)
+                    {
+                        map[x + n, y + m] = roomLayout[x, y];
+                    }
+                }
+                count++;
+            }
+        }
+
+        GameObject roomGO = Instantiate(roomTemplate, new Vector3(0, 0, 0), Quaternion.identity, roomHolder.transform) as GameObject;
+        roomGO.name = "Map";
+        Room room = roomGO.GetComponent<Room>();
+
+        // Overload should find and connect reigons automatically without creating a new map
+        room.SetupMap(new Vector3(0, 0, 0), map, seed, marchingSquares);
+        map = room.GetRoomTileLayout();
+
+        room.InstantiateTiles(0, 0);
+
+        //InstantiateTiles(map);
+    }
+
+    private void InstantiateTiles(int[,] map)
+    {
+        for (int x = 0; x < map.GetLength(0); x++)
+        {
+            for (int y = 0; y < map.GetLength(1); y++)
+            {
+                if (map[x, y] != 15 && map[x, y] != 0)
+                {
+                    GameObject tilem = Instantiate(marchingSquares[0], new Vector3(x, -y, 0f), Quaternion.identity, transform) as GameObject;
+                    tilem.name = "Compensation";
+                }
+
+                if (map[x, y] != 15)
+                {
+                    GameObject tile = Instantiate(marchingSquares[map[x, y]], new Vector3(x, -y, 0f), Quaternion.identity, transform) as GameObject;
+                    tile.name = map[x, y].ToString();
+                }
+                //Debug.Log(tile.transform.position);
+            }
+        }
+    }
+
     // Makes sure the map has no exits to the outside of the map (void space)
     void MakeBorders()
     {
+        Quaternion angleCompensation = Quaternion.Euler(90,0,0);
+
         for (int x = -1; x < mapWidth * roomWidth; x++)
         {
             // Top
-            GameObject tileA = Instantiate(wall, new Vector3(x, 1, 0f), Quaternion.identity, transform) as GameObject;
+            GameObject tileA = Instantiate(wall, new Vector3(x, 0f, -1), angleCompensation, transform) as GameObject;
             tileA.name = "Border: " + tileA.GetHashCode();
 
             // Bottom
-            GameObject tileB = Instantiate(wall, new Vector3(x, -(mapHeight * roomHeight), 0f), Quaternion.identity, transform) as GameObject;
+            GameObject tileB = Instantiate(wall, new Vector3(x, 0f, (mapHeight * roomHeight)), angleCompensation, transform) as GameObject;
             tileB.name = "Border: " + tileB.GetHashCode();
         }
 
         for (int y = -1; y < mapHeight * roomHeight; y++)
         {
             // Left
-            GameObject tileA = Instantiate(wall, new Vector3(-1, -y, 0f), Quaternion.identity, transform) as GameObject;
+            GameObject tileA = Instantiate(wall, new Vector3(-1, 0f, y), angleCompensation, transform) as GameObject;
             tileA.name = "Border: " + tileA.GetHashCode();
 
             // Right
-            GameObject tileB = Instantiate(wall, new Vector3(mapWidth * roomWidth, -y, 0f), Quaternion.identity, transform) as GameObject;
+            GameObject tileB = Instantiate(wall, new Vector3(mapWidth * roomWidth, 0f, y), angleCompensation, transform) as GameObject;
             tileB.name = "Border: " + tileB.GetHashCode();
         }
     }

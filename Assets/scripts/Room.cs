@@ -7,7 +7,9 @@ public class Room : MonoBehaviour {
     public int roomWidth;
     public string seed;
     public Vector3 startPos;
-    public GameObject filled;
+    public GameObject entranceTile;
+    public GameObject exitTile;
+
     [Range(0, 100)] public int randomFillPercent;
     public bool isStartRoom;
     public bool isEndRoom;
@@ -26,6 +28,8 @@ public class Room : MonoBehaviour {
     private HashSet<Vector2> checkedTiles;
     private Dictionary<int, HashSet<Vector2>> reigons;
     private System.Random pseudoRandom;
+
+    private int constant;
 
     public void MakeStartRoom()
     {
@@ -59,62 +63,75 @@ public class Room : MonoBehaviour {
         int midHeight = roomHeight / 2;
         int midWidth = roomWidth / 2;
 
-        switch (direction)
+        if (isStartRoom)
         {
-            case 1:
-                // Sides
-
-                DrawCircleAround(new Vector2(0, midHeight), 3, true);
-                DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 3, true);
-
-                //tiles[0, midHeight] = 0;
-                //tiles[0, midHeight + 1] = 0;
-                //tiles[roomWidth - 1, midHeight] = 0;
-                //tiles[roomWidth - 1, midHeight + 1] = 0;
-                break;
-
-            case 2:
-                // Sides
-                DrawCircleAround(new Vector2(0, midHeight), 3, true);
-                DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 3, true);
-
-                //tiles[0, midHeight] = 0;
-                //tiles[0, midHeight + 1] = 0;
-                //tiles[roomWidth - 1, midHeight] = 0;
-                //tiles[roomWidth - 1, midHeight + 1] = 0;
-
-                // Top
-                DrawCircleAround(new Vector2(midWidth, 0), 3, true);
-
-                //tiles[midWidth, 0] = 0;
-                //tiles[midWidth + 1, 0] = 0;
-
-                // Bottom
-                DrawCircleAround(new Vector2(midWidth, roomHeight - 1), 3, true);
-
-                //tiles[midWidth, roomHeight - 1] = 0;
-                //tiles[midWidth + 1, roomHeight - 1] = 0;
-
-                break;
-
-            case 3:
-                // Sides 
-                DrawCircleAround(new Vector2(0, midHeight), 3, true);
-                DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 3, true);
-
-                //tiles[0, midHeight] = 0;
-                //tiles[0, midHeight + 1] = 0;
-                //tiles[roomWidth - 1, midHeight] = 0;
-                //tiles[roomWidth - 1, midHeight + 1] = 0;
-
-                // Top
-                DrawCircleAround(new Vector2(midWidth, 0), 3, true);
-
-                //tiles[midWidth, 0] = 0;
-                //tiles[midWidth + 1, 0] = 0;
-                break;
-
+            Vector2 location = new Vector2(midWidth, 0);
+            DrawCircleAround(location, 2);
+            Instantiate(entranceTile, location + (Vector2)transform.position, Quaternion.identity, transform);
         }
+        else if (isEndRoom)
+        {
+            Vector2 location = new Vector2(midWidth, roomHeight * constant);
+            DrawCircleAround(location, 2);
+            Instantiate(exitTile, new Vector2(midWidth, -roomHeight) + (Vector2) transform.position, Quaternion.identity, transform);
+        }
+
+        //switch (direction)
+        //{
+        //    case 1:
+        //        // Sides
+
+        //        DrawCircleAround(new Vector2(0, midHeight), 1, true);
+        //        DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 1, true);
+
+        //        //tiles[0, midHeight] = 0;
+        //        //tiles[0, midHeight + 1] = 0;
+        //        //tiles[roomWidth - 1, midHeight] = 0;
+        //        //tiles[roomWidth - 1, midHeight + 1] = 0;
+        //        break;
+
+        //    case 2:
+        //        // Sides
+        //        DrawCircleAround(new Vector2(0, midHeight), 1, true);
+        //        DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 1, true);
+
+        //        //tiles[0, midHeight] = 0;
+        //        //tiles[0, midHeight + 1] = 0;
+        //        //tiles[roomWidth - 1, midHeight] = 0;
+        //        //tiles[roomWidth - 1, midHeight + 1] = 0;
+
+        //        // Top
+        //        DrawCircleAround(new Vector2(midWidth, 0), 1, true);
+
+        //        //tiles[midWidth, 0] = 0;
+        //        //tiles[midWidth + 1, 0] = 0;
+
+        //        // Bottom
+        //        DrawCircleAround(new Vector2(midWidth, roomHeight - 1), 1, true);
+
+        //        //tiles[midWidth, roomHeight - 1] = 0;
+        //        //tiles[midWidth + 1, roomHeight - 1] = 0;
+
+        //        break;
+
+        //    case 3:
+        //        // Sides 
+        //        DrawCircleAround(new Vector2(0, midHeight), 1, true);
+        //        DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 1, true);
+
+        //        //tiles[0, midHeight] = 0;
+        //        //tiles[0, midHeight + 1] = 0;
+        //        //tiles[roomWidth - 1, midHeight] = 0;
+        //        //tiles[roomWidth - 1, midHeight + 1] = 0;
+
+        //        // Top
+        //        DrawCircleAround(new Vector2(midWidth, 0), 1, true);
+
+        //        //tiles[midWidth, 0] = 0;
+        //        //tiles[midWidth + 1, 0] = 0;
+        //        break;
+
+        //}
     }
 
     public void SetupRoom(Vector3 pos, int width, int height, string tempSeed, int fillPercent, GameObject[] wallTextures, int direciton)
@@ -155,6 +172,43 @@ public class Room : MonoBehaviour {
         {
             SmoothMap();
         }
+    }
+
+    public void SetupMap(Vector3 pos, int[,] nodeMap, string tempSeed, GameObject[] wallTextures)
+    {
+        //prelim variable setup
+        
+        tiles = nodeMap;
+        roomHeight = nodeMap.GetLength(0);
+        roomWidth = nodeMap.GetLength(1);
+        seed = tempSeed;
+        startPos = pos;
+        pseudoRandom = new System.Random(seed.GetHashCode());
+        reigons = new Dictionary<int, HashSet<Vector2>>();
+        checkedTiles = new HashSet<Vector2>();
+        walls = wallTextures;
+        floorTiles = new List<List<Vector2>>();
+        connections = new List<Vector2[]>();
+        exitTiles = new List<Vector2>();
+        
+
+
+        //Debug.Log("hafglibgnel");
+
+        FindReigons();
+
+        //print("dklfgOLeji");
+
+        ConnectReigons();
+        DrawConnections();
+
+        //// A couple more smoothing iterations to hopefully remove random obstacles
+        ////for (int n = 0; n < 2; n++)
+        ////{
+        ////    SmoothMap();
+        ////}
+
+        //InstantiateTiles(0,0);
     }
 
     public int[,] GetRoomNodeLayout()
@@ -282,7 +336,7 @@ public class Room : MonoBehaviour {
             }
         }
 
-        int[] nodeArray = new int[4] { tl, tr, br, bl };
+        int[] nodeArray = new int[4] { bl, br, tr, tl };
 
         int score = 0;
 
@@ -396,7 +450,7 @@ public class Room : MonoBehaviour {
                 tileList.Add(neighborPos);
             }
         }
-        
+        name = name;
         // Adds reigon to tile list
         floorTiles.Add(tileList);
     }
@@ -472,6 +526,8 @@ public class Room : MonoBehaviour {
         foreach(Vector2[] pair in connections)
         {
             DrawCorridor(pair[0], pair[1]);
+            if (name == "Map")
+                print("x");
         }
     }
 
@@ -538,7 +594,9 @@ public class Room : MonoBehaviour {
         List<Vector2> line = GetTilesOnLine(start, end);
         foreach(Vector2 tile in line)
         {
-            DrawCircleAround(tile, 1);
+            DrawCircleAround(tile, 2);
+            //if (name == "Map")
+            //    print("y");
         }
     }
 
@@ -634,14 +692,14 @@ public class Room : MonoBehaviour {
     public void InstantiateNodes(int offsetX, int offsetY)
     {
         //tiles = mainMap.GetRoomNodeLayout();
-        Debug.Log("x");
+        //Debug.Log("x");
         for (int x = 0; x < tiles.GetLength(0); x++)
         {
             for (int y = 0; y < tiles.GetLength(1); y++)
             {
                 if (tiles[x, y] == 1)
                 {
-                    GameObject tile = Instantiate(filled, new Vector3(x + offsetX, (y + offsetY), 0f), Quaternion.identity, transform) as GameObject;
+                    GameObject tile = Instantiate(walls[0], new Vector3(x + offsetX, 0f, (y + offsetY)), Quaternion.identity, transform) as GameObject;
                     tile.name = name + name.GetHashCode();
                 }
 
@@ -649,27 +707,47 @@ public class Room : MonoBehaviour {
         }
     }
 
+    // 5 14
+    // 10 82
+
     public void InstantiateTiles(int offsetX, int offsetY)
     {
         // Makes sure the tile array is up to date
         MakeTileArrayFromNodes();
 
+        Quaternion angleCompensation = Quaternion.Euler(90, 0, 0);
+
         for (int x = 0; x < actual.GetLength(0); x++)
         {
             for (int y = 0; y < actual.GetLength(1); y++)
             {
-                if (actual[x, y] != 15 && actual[x, y] != 0)
+                if (actual[x, y] != 15 && actual[x, y] != 0 && actual[x, y] != 5 && actual[x, y] != 10)
                 {
-                    GameObject tilem = Instantiate(walls[0], new Vector3(x + offsetX, -(y + offsetY), 0f), Quaternion.identity, transform) as GameObject;
+                    GameObject tilem = Instantiate(walls[0], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
                     tilem.name = "Compensation";
                 }
 
-                if (actual[x, y] != 15)
+                if (actual[x, y] != 15 && actual[x, y] != 5 && actual[x, y] != 10)
                 {
-                    GameObject tile = Instantiate(walls[actual[x, y]], new Vector3(x + offsetX, -(y + offsetY), 0f), Quaternion.identity, transform) as GameObject;
+                    GameObject tile = Instantiate(walls[actual[x, y]], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
                     tile.name = actual[x,y].ToString();
                 }
-                //Debug.Log(tile.transform.position);
+
+                if (actual[x, y] == 5)
+                {
+                    GameObject tile = Instantiate(walls[0], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
+                    GameObject tileB = Instantiate(walls[3], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, tile.transform) as GameObject;
+                    tile.name = actual[x, y].ToString();
+                    tileB.name = "*needed*";
+                }
+
+                if (actual[x, y] == 10)
+                {
+                    GameObject tile = Instantiate(walls[7], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
+                    GameObject tileB = Instantiate(walls[1], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, tile.transform) as GameObject;
+                    tile.name = actual[x, y].ToString();
+                    tileB.name = "*needed*";
+                }
             }
         }
     }

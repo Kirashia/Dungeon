@@ -78,7 +78,7 @@ public class PlayerController : MovingObject {
         }
         
         GameObject shot = Instantiate(gunshot, transform.position, Quaternion.identity, transform) as GameObject;
-        Quaternion target = Quaternion.Euler(0, 0, angle);
+        Quaternion target = Quaternion.Euler(90, 0, angle);
         shot.transform.rotation = target;
         //Debug.Log(target+": "+angle.ToString());
         shot.GetComponent<GunshotController>().MoveB(facingDirection);
@@ -108,7 +108,7 @@ public class PlayerController : MovingObject {
         float horizontal = Input.GetAxis("Horizontal") * Time.deltaTime * moveSpeed;
         float vertical = Input.GetAxis("Vertical") * Time.deltaTime * moveSpeed;
 
-        rb2d.velocity = new Vector2(horizontal, vertical);
+        transform.Translate(new Vector3(horizontal, vertical));
 
         if ((upArrow || downArrow || rightArrow || leftArrow) && !attacking)
             StartCoroutine(Attack(upArrow, downArrow, rightArrow, leftArrow));
