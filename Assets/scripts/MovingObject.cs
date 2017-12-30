@@ -8,7 +8,6 @@ public abstract class MovingObject : MonoBehaviour {
 
     public abstract IEnumerator Attack();
 
-
     public bool dead = false;
     public float speedConstant = 1; // To refine the attack speed numbers
     public bool attacking;

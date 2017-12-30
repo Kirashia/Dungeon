@@ -190,7 +190,7 @@ public class BoardCreator : MonoBehaviour {
             for (int y = 0; y < mapHeight * roomHeight; y += roomHeight)
             {
                 Vector2 pos = new Vector2(x, y);
-                GameObject roomGO = Instantiate(roomTemplate, new Vector2(pos.x, -pos.y), Quaternion.identity, roomHolder.transform) as GameObject;
+                GameObject roomGO = Instantiate(roomTemplate, new Vector3(pos.x, 0f,pos.y), Quaternion.identity, roomHolder.transform) as GameObject;
                 roomGO.name = tiles[pointerX, pointerY].ToString();
                 Room room = roomGO.GetComponent<Room>();
 
@@ -251,6 +251,7 @@ public class BoardCreator : MonoBehaviour {
         room.SetupMap(new Vector3(0, 0, 0), map, seed, marchingSquares);
         map = room.GetRoomTileLayout();
 
+        //room.InstantiateNodes(0, 0);
         room.InstantiateTiles(0, 0);
 
         //InstantiateTiles(map);

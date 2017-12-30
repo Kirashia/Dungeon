@@ -2,9 +2,14 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.AI;
 
-public class EnemyController : MovingObject {
+public class EnemyController : MovingObject{
 
+    public GameObject player;
+    public Vector3 target;
+
+    private NavMeshAgent agent;
 
     public override IEnumerator Attack()
     {
@@ -13,6 +18,7 @@ public class EnemyController : MovingObject {
 
     public void Awake()
     {
+        agent = GetComponent<NavMeshAgent>();
         rb2d = GetComponent<Rigidbody2D>();
         inverseAttackSpeed = 1 / attackSpeed;
         health = 10;
@@ -20,7 +26,10 @@ public class EnemyController : MovingObject {
 
     public override IEnumerator Move()
     {
-        throw new NotImplementedException();
+        target = player.transform.position;
+        Debug.Log("mOVING TOWARDS PLAYER AT: " + target);
+        agent.SetDestination(target);
+        yield return null;
     }
 
     public override void TakeDamage(FacingDirection directionOfDamage, float amountOfDamage, float amountOfKnockback)
@@ -65,6 +74,7 @@ public class EnemyController : MovingObject {
     // Update is called once per frame
     void Update () {
         CheckIfDead();
+        StartCoroutine(Move());
         if (dead)
         {
             Debug.Log(name + " has died");

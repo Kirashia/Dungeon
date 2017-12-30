@@ -73,7 +73,7 @@ public class Room : MonoBehaviour {
         {
             Vector2 location = new Vector2(midWidth, roomHeight * constant);
             DrawCircleAround(location, 2);
-            Instantiate(exitTile, new Vector2(midWidth, -roomHeight) + (Vector2) transform.position, Quaternion.identity, transform);
+            Instantiate(exitTile, new Vector2(midWidth, -roomHeight) + (Vector2)transform.position, Quaternion.identity, transform);
         }
 
         //switch (direction)
@@ -177,7 +177,7 @@ public class Room : MonoBehaviour {
     public void SetupMap(Vector3 pos, int[,] nodeMap, string tempSeed, GameObject[] wallTextures)
     {
         //prelim variable setup
-        
+
         tiles = nodeMap;
         roomHeight = nodeMap.GetLength(0);
         roomWidth = nodeMap.GetLength(1);
@@ -190,7 +190,7 @@ public class Room : MonoBehaviour {
         floorTiles = new List<List<Vector2>>();
         connections = new List<Vector2[]>();
         exitTiles = new List<Vector2>();
-        
+
 
 
         //Debug.Log("hafglibgnel");
@@ -282,14 +282,14 @@ public class Room : MonoBehaviour {
     {
         // Used to tell me how far in the try the program got (for the catch)
         int attemptScore = 0;
-        int boundaryScore = (exitTiles.Contains(tlNodePos)) ?  0 : 1;
+        int boundaryScore = (exitTiles.Contains(tlNodePos)) ? 0 : 1;
         // Var setup
-        
+
         int tr = 0;
         int tl = 0;
         int br = 0;
         int bl = 0;
-        
+
         try
         {
             bl = tiles[(int)tlNodePos.x, (int)tlNodePos.y];
@@ -417,7 +417,7 @@ public class Room : MonoBehaviour {
         List<Vector2> tileList = new List<Vector2>();
 
         //loop randomly selects a tile which is a floor tile (a value of 0)
-        while (tiles[(int) startPos.x, (int) startPos.y] != 0)
+        while (tiles[(int)startPos.x, (int)startPos.y] != 0)
         {
             if (CoordInMapBounds(startPos))
             {
@@ -468,9 +468,9 @@ public class Room : MonoBehaviour {
                 //the actual position on the map
                 int n = (int)tilePos.x + x;
                 int m = (int)tilePos.y + y;
-                
+
                 //if the tile is on a diagonal or is selected tile
-                if (x == y || x == -y || !CoordInMapBounds(new Vector2(n,m)))
+                if (x == y || x == -y || !CoordInMapBounds(new Vector2(n, m)))
                     continue;
 
                 //will only return if the value matches the specified value
@@ -499,7 +499,7 @@ public class Room : MonoBehaviour {
 
 
             // Finds tile in connected reigon that's closest to an unconnected reigon
-            foreach(Vector2 tile in reigons[0])
+            foreach (Vector2 tile in reigons[0])
             {
                 float[] index = FindClosestTileTo(tile, reigons);
                 if (minLength == -1f || index[2] < minLength)
@@ -517,13 +517,13 @@ public class Room : MonoBehaviour {
             reigons[0].AddRange(reigons[(int)minIndex[0]]); // Adds all the selected reigon to the connected part of the 2D array
             reigons.RemoveAt((int)minIndex[0]);             // Remove the reigon from the unconnected part of the 2D array
 
-            connections.Add(new Vector2[] {(startTile), closestTile});
+            connections.Add(new Vector2[] { (startTile), closestTile });
         }
     }
 
     void DrawConnections()
     {
-        foreach(Vector2[] pair in connections)
+        foreach (Vector2[] pair in connections)
         {
             DrawCorridor(pair[0], pair[1]);
             if (name == "Map")
@@ -535,8 +535,8 @@ public class Room : MonoBehaviour {
     {
         List<Vector2> line = new List<Vector2>();
 
-        int x = (int) start.x;
-        int y = (int) start.y;
+        int x = (int)start.x;
+        int y = (int)start.y;
 
         int dx = (int)end.x - x;
         int dy = (int)end.y - y;
@@ -560,14 +560,14 @@ public class Room : MonoBehaviour {
         }
 
         int gradientAccumulation = longest / 2;
-        
+
         for (int n = 0; n < longest; n++)
         {
             line.Add(new Vector2(x, y));
 
             if (inverted)
                 y += step;
-            
+
             else
                 x += step;
 
@@ -583,7 +583,7 @@ public class Room : MonoBehaviour {
 
                 gradientAccumulation -= longest;
             }
-            
+
         }
 
         return line;
@@ -592,7 +592,7 @@ public class Room : MonoBehaviour {
     void DrawCorridor(Vector2 start, Vector2 end)
     {
         List<Vector2> line = GetTilesOnLine(start, end);
-        foreach(Vector2 tile in line)
+        foreach (Vector2 tile in line)
         {
             DrawCircleAround(tile, 2);
             //if (name == "Map")
@@ -608,7 +608,7 @@ public class Room : MonoBehaviour {
             for (int y = -radius; y <= radius; y++)
             {
                 // Lies in or on the circle
-                if (x*x + y*y <= radius*radius)
+                if (x * x + y * y <= radius * radius)
                 {
                     int drawX = (int)point.x + x;
                     int drawY = (int)point.y + y;
@@ -625,7 +625,7 @@ public class Room : MonoBehaviour {
 
         floorTiles.Add(debugList);
     }
-    
+
     // Overload specifically for exits to the room
     void DrawCircleAround(Vector2 point, int radius, bool isExit)
     {
@@ -691,15 +691,13 @@ public class Room : MonoBehaviour {
 
     public void InstantiateNodes(int offsetX, int offsetY)
     {
-        //tiles = mainMap.GetRoomNodeLayout();
-        //Debug.Log("x");
         for (int x = 0; x < tiles.GetLength(0); x++)
         {
             for (int y = 0; y < tiles.GetLength(1); y++)
             {
                 if (tiles[x, y] == 1)
                 {
-                    GameObject tile = Instantiate(walls[0], new Vector3(x + offsetX, 0f, (y + offsetY)), Quaternion.identity, transform) as GameObject;
+                    GameObject tile = Instantiate(walls[16], new Vector3(x + offsetX, 0f, (y + offsetY)), Quaternion.identity, transform) as GameObject;
                     tile.name = name + name.GetHashCode();
                 }
 
@@ -721,33 +719,39 @@ public class Room : MonoBehaviour {
         {
             for (int y = 0; y < actual.GetLength(1); y++)
             {
-                if (actual[x, y] != 15 && actual[x, y] != 0 && actual[x, y] != 5 && actual[x, y] != 10)
+                if (actual[x,y] != 15 && actual[x,y] != 0)
                 {
-                    GameObject tilem = Instantiate(walls[0], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
-                    tilem.name = "Compensation";
+                    GameObject tile = Instantiate(walls[16], new Vector3(x + offsetX, 0f, (y + offsetY)), Quaternion.identity, transform) as GameObject;
+                    tile.name = name + actual[x,y];
                 }
 
-                if (actual[x, y] != 15 && actual[x, y] != 5 && actual[x, y] != 10)
-                {
-                    GameObject tile = Instantiate(walls[actual[x, y]], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
-                    tile.name = actual[x,y].ToString();
-                }
+                //if (actual[x, y] != 15 && actual[x, y] != 0 && actual[x, y] != 5 && actual[x, y] != 10)
+                //{
+                //    GameObject tilem = Instantiate(walls[0], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
+                //    tilem.name = "Compensation";
+                //}
 
-                if (actual[x, y] == 5)
-                {
-                    GameObject tile = Instantiate(walls[0], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
-                    GameObject tileB = Instantiate(walls[3], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, tile.transform) as GameObject;
-                    tile.name = actual[x, y].ToString();
-                    tileB.name = "*needed*";
-                }
+                    //if (actual[x, y] != 15 && actual[x, y] != 5 && actual[x, y] != 10)
+                    //{
+                    //    GameObject tile = Instantiate(walls[actual[x, y]], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
+                    //    tile.name = actual[x,y].ToString();
+                    //}
 
-                if (actual[x, y] == 10)
-                {
-                    GameObject tile = Instantiate(walls[7], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
-                    GameObject tileB = Instantiate(walls[1], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, tile.transform) as GameObject;
-                    tile.name = actual[x, y].ToString();
-                    tileB.name = "*needed*";
-                }
+                    //if (actual[x, y] == 5)
+                    //{
+                    //    GameObject tile = Instantiate(walls[0], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
+                    //    GameObject tileB = Instantiate(walls[3], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, tile.transform) as GameObject;
+                    //    tile.name = actual[x, y].ToString();
+                    //    tileB.name = "*needed*";
+                    //}
+
+                    //if (actual[x, y] == 10)
+                    //{
+                    //    GameObject tile = Instantiate(walls[7], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
+                    //    GameObject tileB = Instantiate(walls[1], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, tile.transform) as GameObject;
+                    //    tile.name = actual[x, y].ToString();
+                    //    tileB.name = "*needed*";
+                    //}
             }
         }
     }
