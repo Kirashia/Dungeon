@@ -710,6 +710,8 @@ public class Room : MonoBehaviour {
 
     public void InstantiateTiles(int offsetX, int offsetY)
     {
+        // Compensation to make all areas accessible
+        WidenBorders();
         // Makes sure the tile array is up to date
         MakeTileArrayFromNodes();
 
@@ -752,6 +754,23 @@ public class Room : MonoBehaviour {
                     //    tile.name = actual[x, y].ToString();
                     //    tileB.name = "*needed*";
                     //}
+            }
+        }
+    }
+
+    public void WidenBorders()
+    {
+        MakeTileArrayFromNodes();
+        Debug.Log("Boop");
+
+        for (int x = 0; x < actual.GetLength(0); x++)
+        {
+            for (int y = 0; y < actual.GetLength(1); y++)
+            {
+                if (actual[x, y] != 15 && actual[x, y] != 0)
+                {
+                    DrawCircleAround(new Vector2(x, y), 1);
+                }
             }
         }
     }
