@@ -11,9 +11,11 @@ public class PlayerController : MovingObject {
 
     public FacingDirection walkingDirection;
 
+    private Rigidbody rb;
+
     public void Awake()
     {
-        rb2d = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody>();
         inverseAttackSpeed = 1 / attackSpeed;
         health = 100;
     }
@@ -23,7 +25,7 @@ public class PlayerController : MovingObject {
         float horizontal = Input.GetAxis("Horizontal") * Time.deltaTime * 1;
         float vertical = Input.GetAxis("Vertical") * Time.deltaTime * 1;
 
-        rb2d.velocity = new Vector2(horizontal, vertical);
+        rb.velocity = new Vector3(horizontal, 0f, vertical);
         yield return null;
     }
 
@@ -110,8 +112,8 @@ public class PlayerController : MovingObject {
         bool rightCTRL = Input.GetKeyDown(KeyCode.RightControl);
 
         //StartCoroutine(Move());
-        float horizontal = Input.GetAxis("Horizontal") * Time.deltaTime * 1;
-        float vertical = Input.GetAxis("Vertical") * Time.deltaTime * 1;
+        float horizontal = Input.GetAxis("Horizontal") * Time.deltaTime * moveSpeed;
+        float vertical = Input.GetAxis("Vertical") * Time.deltaTime * moveSpeed;
 
         if (vertical >= 1 && horizontal <= -1)
         {
@@ -154,7 +156,9 @@ public class PlayerController : MovingObject {
 
         }
 
-        transform.Translate(new Vector3(horizontal, vertical));
+        //transform.Translate(new Vector3(horizontal, vertical));
+        rb.velocity = new Vector3(horizontal, 0f, vertical);
+        Debug.Log(rb.velocity);
 
         if ((upArrow || downArrow || rightArrow || leftArrow || rightCTRL) && !attacking)
             StartCoroutine(Attack(upArrow, downArrow, rightArrow, leftArrow, rightCTRL));
