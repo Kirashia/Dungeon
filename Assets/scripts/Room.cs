@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class Room : MonoBehaviour {
@@ -13,8 +14,8 @@ public class Room : MonoBehaviour {
     [Range(0, 100)] public int randomFillPercent;
     public bool isStartRoom;
     public bool isEndRoom;
-    public Vector2 entrancePos;
-    public Vector2 endPos;
+    public Vector3 entrancePos;
+    public Vector3 endPos;
 
     public GameObject[] walls;
 
@@ -45,8 +46,9 @@ public class Room : MonoBehaviour {
         isStartRoom = false;
     }
 
-    public void MakeEntranceAndExits(int direction)
+    public void MakeEntranceAndExitsToReigons(int direction)
     {
+
         // 1 - entrance and exit on both sides of map
         // 2 - 1 with a bottom and a top exit
         // 3 - 1 with a top exit
@@ -62,19 +64,6 @@ public class Room : MonoBehaviour {
 
         int midHeight = roomHeight / 2;
         int midWidth = roomWidth / 2;
-
-        if (isStartRoom)
-        {
-            Vector2 location = new Vector2(midWidth, 0);
-            DrawCircleAround(location, 2);
-            Instantiate(entranceTile, location + (Vector2)transform.position, Quaternion.identity, transform);
-        }
-        else if (isEndRoom)
-        {
-            Vector2 location = new Vector2(midWidth, roomHeight * constant);
-            DrawCircleAround(location, 2);
-            Instantiate(exitTile, new Vector2(midWidth, -roomHeight) + (Vector2)transform.position, Quaternion.identity, transform);
-        }
 
         //switch (direction)
         //{
@@ -134,6 +123,31 @@ public class Room : MonoBehaviour {
         //}
     }
 
+    private void MakeEntranceAndExitsToRoom()
+    {
+        for (int x = 0; x < tiles.GetLength(0); x++)
+        {
+            for (int y = 0; y < tiles.GetLength(1); y++)
+            {
+                if (isStartRoom && tiles[x, y] == 0)
+                {
+                    startPos = new Vector3(x, 0, y); // In 3D space the "y" is replaced with "z" otherwise pathfinding doesn't work
+                    GameObject startTile = Instantiate(entranceTile, startPos, Quaternion.identity, transform) as GameObject;
+                    startTile.name = "Start";
+                    return; // No further action is required so return to the calling function
+                }
+                else if (isEndRoom && tiles[x, y] == 0)
+                {
+                    endPos = new Vector3(x, 0, y);
+                    Debug.Log("Making end room at: " + endPos);
+                    GameObject endTile = Instantiate(exitTile, endPos, Quaternion.identity,transform) as GameObject;
+                    endTile.name = "End";
+                    return;
+                }
+            }
+        }
+    }
+
     public void SetupRoom(Vector3 pos, int width, int height, string tempSeed, int fillPercent, GameObject[] wallTextures, int direciton)
     {
         //prelim variable setup
@@ -161,7 +175,10 @@ public class Room : MonoBehaviour {
         }
 
         // Adds a 2x1 hole to each side corresponding to the correct direction
-        MakeEntranceAndExits(direciton);
+        MakeEntranceAndExitsToReigons(direciton);
+
+        // Defines the start and end points for the whole map
+        MakeEntranceAndExitsToRoom();
 
         FindReigons();
         ConnectReigons();
@@ -174,6 +191,7 @@ public class Room : MonoBehaviour {
         }
     }
 
+    // Extra overload in case a map is pre-provided
     public void SetupMap(Vector3 pos, int[,] nodeMap, string tempSeed, GameObject[] wallTextures)
     {
         //prelim variable setup
@@ -705,9 +723,6 @@ public class Room : MonoBehaviour {
         }
     }
 
-    // 5 14
-    // 10 82
-
     public void InstantiateTiles(int offsetX, int offsetY)
     {
         // Compensation to make all areas accessible
@@ -727,33 +742,11 @@ public class Room : MonoBehaviour {
                     tile.name = name + actual[x,y];
                 }
 
-                //if (actual[x, y] != 15 && actual[x, y] != 0 && actual[x, y] != 5 && actual[x, y] != 10)
-                //{
-                //    GameObject tilem = Instantiate(walls[0], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
-                //    tilem.name = "Compensation";
-                //}
-
-                    //if (actual[x, y] != 15 && actual[x, y] != 5 && actual[x, y] != 10)
-                    //{
-                    //    GameObject tile = Instantiate(walls[actual[x, y]], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
-                    //    tile.name = actual[x,y].ToString();
-                    //}
-
-                    //if (actual[x, y] == 5)
-                    //{
-                    //    GameObject tile = Instantiate(walls[0], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
-                    //    GameObject tileB = Instantiate(walls[3], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, tile.transform) as GameObject;
-                    //    tile.name = actual[x, y].ToString();
-                    //    tileB.name = "*needed*";
-                    //}
-
-                    //if (actual[x, y] == 10)
-                    //{
-                    //    GameObject tile = Instantiate(walls[7], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
-                    //    GameObject tileB = Instantiate(walls[1], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, tile.transform) as GameObject;
-                    //    tile.name = actual[x, y].ToString();
-                    //    tileB.name = "*needed*";
-                    //}
+                if (actual[x, y] == 0)
+                {
+                    GameObject tilem = Instantiate(walls[0], new Vector3(x + offsetX, 0f, (y + offsetY)), angleCompensation, transform) as GameObject;
+                    tilem.name = "Compensation";
+                }
             }
         }
     }

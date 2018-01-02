@@ -189,8 +189,8 @@ public class BoardCreator : MonoBehaviour {
             pointerY = 0;
             for (int y = 0; y < mapHeight * roomHeight; y += roomHeight)
             {
-                Vector2 pos = new Vector2(x, y);
-                GameObject roomGO = Instantiate(roomTemplate, new Vector3(pos.x, 0f,pos.y), Quaternion.identity, roomHolder.transform) as GameObject;
+                Vector3 pos = new Vector3(x,0f, y);
+                GameObject roomGO = Instantiate(roomTemplate, pos, Quaternion.identity, roomHolder.transform) as GameObject;
                 roomGO.name = tiles[pointerX, pointerY].ToString();
                 Room room = roomGO.GetComponent<Room>();
 
@@ -287,22 +287,22 @@ public class BoardCreator : MonoBehaviour {
         for (int x = -1; x < mapWidth * roomWidth; x++)
         {
             // Top
-            GameObject tileA = Instantiate(wall, new Vector3(x, 0f, -1), angleCompensation, transform) as GameObject;
+            GameObject tileA = Instantiate(marchingSquares[16], new Vector3(x, 0f, -1), angleCompensation, transform) as GameObject;
             tileA.name = "Border: " + tileA.GetHashCode();
 
             // Bottom
-            GameObject tileB = Instantiate(wall, new Vector3(x, 0f, (mapHeight * roomHeight)), angleCompensation, transform) as GameObject;
+            GameObject tileB = Instantiate(marchingSquares[16], new Vector3(x, 0f, (mapHeight * roomHeight)), angleCompensation, transform) as GameObject;
             tileB.name = "Border: " + tileB.GetHashCode();
         }
 
         for (int y = -1; y < mapHeight * roomHeight; y++)
         {
             // Left
-            GameObject tileA = Instantiate(wall, new Vector3(-1, 0f, y), angleCompensation, transform) as GameObject;
+            GameObject tileA = Instantiate(marchingSquares[16], new Vector3(-1, 0f, y), angleCompensation, transform) as GameObject;
             tileA.name = "Border: " + tileA.GetHashCode();
 
             // Right
-            GameObject tileB = Instantiate(wall, new Vector3(mapWidth * roomWidth, 0f, y), angleCompensation, transform) as GameObject;
+            GameObject tileB = Instantiate(marchingSquares[16], new Vector3(mapWidth * roomWidth, 0f, y), angleCompensation, transform) as GameObject;
             tileB.name = "Border: " + tileB.GetHashCode();
         }
     }

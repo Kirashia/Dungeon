@@ -1,3 +1,6 @@
+02/01/2018, 14:04 - 	entrances and exits instantiated although in the incorrect positions
+			world translated into 3d environment, player and walls now 3d
+
 15/12/2017, 00:09 - 	map generation completed, barre start and end tiles, and item placement
 			minor error (leave for now) where exits between rooms leave a small line in the walls
 
