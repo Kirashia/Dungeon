@@ -65,62 +65,39 @@ public class Room : MonoBehaviour {
         int midHeight = roomHeight / 2;
         int midWidth = roomWidth / 2;
 
-        //switch (direction)
-        //{
-        //    case 1:
-        //        // Sides
+        switch (direction)
+        {
+            case 1:
+                // Sides
+                DrawCircleAround(new Vector2(0, midHeight), 1, true);
+                DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 1, true);
 
-        //        DrawCircleAround(new Vector2(0, midHeight), 1, true);
-        //        DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 1, true);
+                break;
 
-        //        //tiles[0, midHeight] = 0;
-        //        //tiles[0, midHeight + 1] = 0;
-        //        //tiles[roomWidth - 1, midHeight] = 0;
-        //        //tiles[roomWidth - 1, midHeight + 1] = 0;
-        //        break;
+            case 2:
+                // Sides
+                DrawCircleAround(new Vector2(0, midHeight), 1, true);
+                DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 1, true);
 
-        //    case 2:
-        //        // Sides
-        //        DrawCircleAround(new Vector2(0, midHeight), 1, true);
-        //        DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 1, true);
+                // Top
+                DrawCircleAround(new Vector2(midWidth, 0), 1, true);
 
-        //        //tiles[0, midHeight] = 0;
-        //        //tiles[0, midHeight + 1] = 0;
-        //        //tiles[roomWidth - 1, midHeight] = 0;
-        //        //tiles[roomWidth - 1, midHeight + 1] = 0;
+                // Bottom
+                DrawCircleAround(new Vector2(midWidth, roomHeight - 1), 1, true);
 
-        //        // Top
-        //        DrawCircleAround(new Vector2(midWidth, 0), 1, true);
+                break;
 
-        //        //tiles[midWidth, 0] = 0;
-        //        //tiles[midWidth + 1, 0] = 0;
+            case 3:
+                // Sides 
+                DrawCircleAround(new Vector2(0, midHeight), 1, true);
+                DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 1, true);
 
-        //        // Bottom
-        //        DrawCircleAround(new Vector2(midWidth, roomHeight - 1), 1, true);
+                // Top
+                DrawCircleAround(new Vector2(midWidth, 0), 1, true);
 
-        //        //tiles[midWidth, roomHeight - 1] = 0;
-        //        //tiles[midWidth + 1, roomHeight - 1] = 0;
+                break;
 
-        //        break;
-
-        //    case 3:
-        //        // Sides 
-        //        DrawCircleAround(new Vector2(0, midHeight), 1, true);
-        //        DrawCircleAround(new Vector2(roomWidth - 1, midHeight), 1, true);
-
-        //        //tiles[0, midHeight] = 0;
-        //        //tiles[0, midHeight + 1] = 0;
-        //        //tiles[roomWidth - 1, midHeight] = 0;
-        //        //tiles[roomWidth - 1, midHeight + 1] = 0;
-
-        //        // Top
-        //        DrawCircleAround(new Vector2(midWidth, 0), 1, true);
-
-        //        //tiles[midWidth, 0] = 0;
-        //        //tiles[midWidth + 1, 0] = 0;
-        //        break;
-
-        //}
+        }
     }
 
     private void MakeEntranceAndExitsToRoom()
@@ -177,8 +154,8 @@ public class Room : MonoBehaviour {
         // Adds a 2x1 hole to each side corresponding to the correct direction
         MakeEntranceAndExitsToReigons(direciton);
 
-        // Defines the start and end points for the whole map
-        MakeEntranceAndExitsToRoom();
+        //// Defines the start and end points for the whole map
+        //MakeEntranceAndExitsToRoom();
 
         FindReigons();
         ConnectReigons();

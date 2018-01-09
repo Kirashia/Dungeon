@@ -8,7 +8,7 @@ public class EnemyController : MovingObject{
 
     public GameObject player;
     public Vector3 target;
-
+    public bool reached = false;
     private NavMeshAgent agent;
 
     public override IEnumerator Attack()
@@ -29,7 +29,8 @@ public class EnemyController : MovingObject{
         target = player.transform.position;
         Debug.Log("mOVING TOWARDS PLAYER AT: " + target);
         agent.SetDestination(target);
-        yield return null;
+        yield return new WaitWhile(() => transform.position != target);
+        reached = true;
     }
 
     public override void TakeDamage(FacingDirection directionOfDamage, float amountOfDamage, float amountOfKnockback)
@@ -74,7 +75,10 @@ public class EnemyController : MovingObject{
     // Update is called once per frame
     void Update () {
         CheckIfDead();
-        StartCoroutine(Move());
+
+        if (!reached)
+            StartCoroutine(Move());
+
         if (dead)
         {
             Debug.Log(name + " has died");

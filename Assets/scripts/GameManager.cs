@@ -7,7 +7,8 @@ public class GameManager : MonoBehaviour {
     public static GameManager instance = null;
     public BoardCreator boardCreator;
     public GameObject player;
-
+    public GameObject enemyPrefab;
+    public int numberOfEnemies;
 
     //private PlayerController playerController;
 
@@ -23,8 +24,20 @@ public class GameManager : MonoBehaviour {
         boardCreator = GetComponent<BoardCreator>();
         boardCreator.GenerateMap();
         player.transform.position = boardCreator.GetPlayerStartLocation();
-        //playerController = GetComponent<PlayerController>();
+        MakeEnemies();
 	}
+
+    void MakeEnemies()
+    {
+        Vector3 end = boardCreator.GetPlayerEndLocation();
+
+        for(int i = 0; i < numberOfEnemies; i++)
+        {
+            GameObject newEnemy = Instantiate(enemyPrefab, end, Quaternion.identity) as GameObject;
+            newEnemy.name = "Enemy: " + i;
+            newEnemy.GetComponent<EnemyController>().player = player;
+        }
+    }
 	
 	//// Update is called once per frame
 	//void Update () {

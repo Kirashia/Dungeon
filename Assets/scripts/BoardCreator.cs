@@ -28,10 +28,14 @@ public class BoardCreator : MonoBehaviour {
     private int[,] tiles;
     public Vector2 startLocation;
     public Vector2 endLocation;
+    public Vector3 actualStart;
+    public Vector3 actualEnd;
     private System.Random pseudoRandom;
 
     private GameObject roomHolder;
     private List<Room> rooms;
+    private Room startRoom;
+    private Room endRoom;
 
     public void GenerateMap()
     {
@@ -54,9 +58,14 @@ public class BoardCreator : MonoBehaviour {
         ConnectRooms();
     }
 
-    public Vector2 GetPlayerStartLocation()
+    public Vector3 GetPlayerStartLocation()
     {
-        return Vector2.Scale(startLocation, new Vector2(roomWidth, roomHeight));
+        return actualStart;
+    }
+
+    public Vector3 GetPlayerEndLocation()
+    {
+        return actualEnd;
     }
 
     void GenerateMapTemplate()
@@ -174,6 +183,7 @@ public class BoardCreator : MonoBehaviour {
         
         }
 
+        
     }  
 
     void MakeRooms()
@@ -198,10 +208,12 @@ public class BoardCreator : MonoBehaviour {
                 if (new Vector2(pointerX,pointerY) == startLocation)
                 {
                     room.MakeStartRoom();
+                    startRoom = room;
                 }
                 else if (new Vector2(pointerX, pointerY) == endLocation)
                 {
                     room.MakeEndRoom();
+                    endRoom = room;
                 }
 
                 room.SetupRoom(pos, roomWidth, roomHeight, tempSeed, randomFillPercent, marchingSquares, tiles[pointerX, pointerY]);
@@ -219,6 +231,8 @@ public class BoardCreator : MonoBehaviour {
             }
             pointerX++;
         }
+
+        MakeEntranceAndExits();
     }
 
     void ConnectRooms()
@@ -255,6 +269,29 @@ public class BoardCreator : MonoBehaviour {
         room.InstantiateTiles(0, 0);
 
         //InstantiateTiles(map);
+    }
+
+    private void MakeEntranceAndExits()
+    {
+
+        int[,] startMap = startRoom.GetRoomTileLayout();
+        int[,] endMap = endRoom.GetRoomTileLayout();
+
+        for (int x = 0; x < startMap.GetLength(0); x++)
+        {
+            for (int y = 0; y < startMap.GetLength(1); y++)
+            {
+                if (startMap[x,y] == 1)
+                    actualStart = new Vector3(startLocation.x * roomWidth + x, 0f, startLocation.y * roomHeight + y);
+
+                if (endMap[x, y] == 1)
+                    actualEnd = new Vector3(endLocation.x * roomHeight + x, 0f, endLocation.y * roomWidth + y);
+            }
+        }
+
+        Instantiate(startTile, actualStart, Quaternion.identity);
+        Instantiate(endTile, actualEnd, Quaternion.identity);
+
     }
 
     private void InstantiateTiles(int[,] map)
