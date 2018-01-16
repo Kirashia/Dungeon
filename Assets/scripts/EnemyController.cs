@@ -26,11 +26,17 @@ public class EnemyController : MovingObject{
 
     public override IEnumerator Move()
     {
+        Debug.Log("test: "+target);
+
         target = player.transform.position;
-        Debug.Log("mOVING TOWARDS PLAYER AT: " + target);
+        float sqrRemaining = Vector3.SqrMagnitude(transform.position - target);
         agent.SetDestination(target);
-        yield return new WaitWhile(() => transform.position != target);
-        reached = true;
+
+        while (sqrRemaining > float.Epsilon && target == player.transform.position)
+        {
+            sqrRemaining = Vector3.SqrMagnitude(transform.position - target);
+            yield return null;
+        }
     }
 
     public override void TakeDamage(FacingDirection directionOfDamage, float amountOfDamage, float amountOfKnockback)
