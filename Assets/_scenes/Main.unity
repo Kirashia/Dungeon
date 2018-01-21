@@ -156,6 +156,21 @@ Prefab:
       propertyPath: m_IsActive
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 54112175569835422, guid: fcafdb4bee87ad24f8c97bd40197b85d,
+        type: 2}
+      propertyPath: m_IsKinematic
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 114298902167178434, guid: fcafdb4bee87ad24f8c97bd40197b85d,
+        type: 2}
+      propertyPath: moveSpeed
+      value: 250
+      objectReference: {fileID: 0}
+    - target: {fileID: 54112175569835422, guid: fcafdb4bee87ad24f8c97bd40197b85d,
+        type: 2}
+      propertyPath: m_Constraints
+      value: 112
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: fcafdb4bee87ad24f8c97bd40197b85d, type: 2}
   m_IsPrefabParent: 0
@@ -191,7 +206,7 @@ MonoBehaviour:
   player: {fileID: 2068369964}
   enemyPrefab: {fileID: 1687554392512844, guid: d5938b18e5e1eec43ae8ab2ae498b11c,
     type: 2}
-  numberOfEnemies: 1
+  numberOfEnemies: 3
 --- !u!4 &1243786954
 Transform:
   m_ObjectHideFlags: 0
@@ -253,8 +268,8 @@ MonoBehaviour:
     type: 2}
   startTile: {fileID: 1088370739087926, guid: af6609c5728c4bc4898d5ca287894d89, type: 2}
   endTile: {fileID: 1723164955843368, guid: 2a167d3f7ae514c4a9e643b158170184, type: 2}
-  roomHeight: 75
-  roomWidth: 75
+  roomHeight: 50
+  roomWidth: 50
   startLocation: {x: 0, y: 0}
   endLocation: {x: 0, y: 0}
   actualStart: {x: 0, y: 0, z: 0}
