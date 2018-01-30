@@ -78,13 +78,14 @@ public class PlayerController : MovingObject {
         {
             facingDirection = FacingDirection.South;
             angle = 180;
-        } else
+        }
+        else
         {
             return;
         }
         
         GameObject shot = Instantiate(gunshot, transform.position, Quaternion.identity, transform) as GameObject;
-        Quaternion target = Quaternion.Euler(90, 0, angle);
+        Quaternion target = Quaternion.Euler(90, angle, 0);
         shot.transform.rotation = target;
         //Debug.Log(target+": "+angle.ToString());
         shot.GetComponent<GunshotController>().MoveB(facingDirection);
@@ -158,7 +159,7 @@ public class PlayerController : MovingObject {
 
         //transform.Translate(new Vector3(horizontal, vertical));
         rb.velocity = new Vector3(horizontal, 0f, vertical);
-        Debug.Log(rb.velocity);
+        //Debug.Log(rb.velocity);
 
         if ((upArrow || downArrow || rightArrow || leftArrow || rightCTRL) && !attacking)
             StartCoroutine(Attack(upArrow, downArrow, rightArrow, leftArrow, rightCTRL));
@@ -237,7 +238,7 @@ public class PlayerController : MovingObject {
         {
             // Melee attack
             GameObject attack = Instantiate(explosion, transform.position, Quaternion.identity, transform) as GameObject;
-            Quaternion target = Quaternion.Euler(0, 0, angle);
+            Quaternion target = Quaternion.Euler(90, 0, angle);
             attack.transform.rotation = target;
             attack.GetComponent<ExplosionController>().Explode(walkingDirection);
         }
@@ -245,7 +246,7 @@ public class PlayerController : MovingObject {
         {
             // Ranged attack
             GameObject shot = Instantiate(gunshot, transform.position, Quaternion.identity, transform) as GameObject;
-            Quaternion target = Quaternion.Euler(0, 0, angle);
+            Quaternion target = Quaternion.Euler(90, 0, angle);
             shot.transform.rotation = target;
             shot.GetComponent<GunshotController>().MoveB(facingDirection);
         }
@@ -261,8 +262,4 @@ public class PlayerController : MovingObject {
         throw new NotImplementedException();
     }
 
-    public override void TakeDamage(FacingDirection directionOfDamage, float amountOfDamage, float amountOfKnockback)
-    {
-        throw new NotImplementedException();
-    }
 }

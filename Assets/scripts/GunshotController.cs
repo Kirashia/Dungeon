@@ -8,22 +8,24 @@ public class GunshotController : MovingObject {
     public float damage;
     public float knockback;
 
-    private BoxCollider2D boxCollider;
+    private Rigidbody rb;
+
+    private BoxCollider boxCollider;
 
 	// Use this for initialization
 	void Start ()
     {
-        rb2d = GetComponent<Rigidbody2D>();
-        boxCollider = GetComponent<BoxCollider2D>();
+        rb = GetComponent<Rigidbody>();
+        boxCollider = GetComponent<BoxCollider>();
 	}
 	
     public void MoveB(FacingDirection direction)
     {
-        if (rb2d != GetComponent<Rigidbody2D>())
-            rb2d = GetComponent<Rigidbody2D>();
+        if (rb != GetComponent<Rigidbody>())
+            rb = GetComponent<Rigidbody>();
 
-        if (boxCollider != GetComponent<BoxCollider2D>())
-            boxCollider = GetComponent<BoxCollider2D>();
+        if (boxCollider != GetComponent<BoxCollider>())
+            boxCollider = GetComponent<BoxCollider>();
 
 
         if (facingDirection != direction) {
@@ -31,7 +33,7 @@ public class GunshotController : MovingObject {
             //print(facingDirection);
         }
 
-        Vector3 velocity = new Vector3(0, 0);
+        Vector3 velocity = new Vector3(0, 0, 0);
 
         switch (direction)
         {
@@ -62,7 +64,8 @@ public class GunshotController : MovingObject {
 
         }
 
-        transform.Translate(velocity);
+        rb.velocity = velocity;
+        Debug.Log(rb.velocity);
     }
 
     void OnTriggerEnter2D(Collider2D other)
@@ -90,11 +93,6 @@ public class GunshotController : MovingObject {
     }
 
     public override IEnumerator Attack()
-    {
-        throw new NotImplementedException();
-    }
-
-    public override void TakeDamage(FacingDirection directionOfDamage, float amountOfDamage, float amountOfKnockback)
     {
         throw new NotImplementedException();
     }

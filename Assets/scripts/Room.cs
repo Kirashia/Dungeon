@@ -713,7 +713,7 @@ public class Room : MonoBehaviour {
         {
             for (int y = 0; y < actual.GetLength(1); y++)
             {
-                if (actual[x,y] != 15 && actual[x,y] != 0)
+                if (/*actual[x,y] != 15 &&*/ actual[x,y] != 0)
                 {
                     GameObject tile = Instantiate(walls[16], new Vector3(x + offsetX, 0f, (y + offsetY)), Quaternion.identity, transform) as GameObject;
                     tile.name = name + actual[x,y];

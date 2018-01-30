@@ -57,9 +57,4 @@ public class ExplosionController : MovingObject {
     {
         throw new NotImplementedException();
     }
-
-    public override void TakeDamage(FacingDirection directionOfDamage, float amountOfDamage, float amountOfKnockback)
-    {
-        throw new NotImplementedException();
-    }
 }
