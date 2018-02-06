@@ -270,6 +270,7 @@ public class PlayerController : MovingObject {
     private void OnCollisionEnter(Collision collision)
     {
         Collider other = collision.collider;
+        Debug.Log("test");
 
         switch (other.tag)
         {
@@ -279,4 +280,16 @@ public class PlayerController : MovingObject {
         }
     }
 
+    private void OnCollision(Collision collision)
+    {
+        Collider other = collision.collider;
+        Debug.Log("test2");
+
+        switch (other.tag)
+        {
+            case "Enemy":
+                TakeDamage(5);
+                break;
+        }
+    }
 }

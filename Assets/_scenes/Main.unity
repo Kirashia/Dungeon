@@ -251,7 +251,7 @@ MonoBehaviour:
   player: {fileID: 2068369964}
   enemyPrefab: {fileID: 1560588183154190, guid: d70f34ebdddc83449ac21c607f1c0eac,
     type: 2}
-  numberOfEnemies: 3
+  numberOfEnemies: 30
 --- !u!4 &1243786954
 Transform:
   m_ObjectHideFlags: 0
@@ -319,53 +319,6 @@ MonoBehaviour:
   endLocation: {x: 0, y: 0}
   actualStart: {x: 0, y: 0, z: 0}
   actualEnd: {x: 0, y: 0, z: 0}
---- !u!1001 &1606996385
-Prefab:
-  m_ObjectHideFlags: 0
-  serializedVersion: 2
-  m_Modification:
-    m_TransformParent: {fileID: 0}
-    m_Modifications:
-    - target: {fileID: 4231707785227974, guid: d70f34ebdddc83449ac21c607f1c0eac, type: 2}
-      propertyPath: m_LocalPosition.x
-      value: 71.03119
-      objectReference: {fileID: 0}
-    - target: {fileID: 4231707785227974, guid: d70f34ebdddc83449ac21c607f1c0eac, type: 2}
-      propertyPath: m_LocalPosition.y
-      value: 0.04998145
-      objectReference: {fileID: 0}
-    - target: {fileID: 4231707785227974, guid: d70f34ebdddc83449ac21c607f1c0eac, type: 2}
-      propertyPath: m_LocalPosition.z
-      value: 67.32803
-      objectReference: {fileID: 0}
-    - target: {fileID: 4231707785227974, guid: d70f34ebdddc83449ac21c607f1c0eac, type: 2}
-      propertyPath: m_LocalRotation.x
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4231707785227974, guid: d70f34ebdddc83449ac21c607f1c0eac, type: 2}
-      propertyPath: m_LocalRotation.y
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4231707785227974, guid: d70f34ebdddc83449ac21c607f1c0eac, type: 2}
-      propertyPath: m_LocalRotation.z
-      value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 4231707785227974, guid: d70f34ebdddc83449ac21c607f1c0eac, type: 2}
-      propertyPath: m_LocalRotation.w
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 4231707785227974, guid: d70f34ebdddc83449ac21c607f1c0eac, type: 2}
-      propertyPath: m_RootOrder
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 195904212557288752, guid: d70f34ebdddc83449ac21c607f1c0eac,
-        type: 2}
-      propertyPath: m_Radius
-      value: 0.5
-      objectReference: {fileID: 0}
-    m_RemovedComponents: []
-  m_ParentPrefab: {fileID: 100100000, guid: d70f34ebdddc83449ac21c607f1c0eac, type: 2}
-  m_IsPrefabParent: 0
 --- !u!1 &1821702708
 GameObject:
   m_ObjectHideFlags: 0
@@ -375,8 +328,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1821702709}
   - component: {fileID: 1821702712}
-  - component: {fileID: 1821702711}
   - component: {fileID: 1821702710}
+  - component: {fileID: 1821702711}
   m_Layer: 0
   m_Name: Cylinder
   m_TagString: Untagged
@@ -429,8 +382,8 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!136 &1821702711
-CapsuleCollider:
+--- !u!64 &1821702711
+MeshCollider:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
@@ -438,10 +391,11 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5
-  m_Height: 2
-  m_Direction: 1
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 2
+  m_Convex: 1
+  m_InflateMesh: 0
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 10206, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!33 &1821702712
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -531,7 +485,7 @@ Transform:
   m_LocalScale: {x: 500, y: 500, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 90.00001, y: 0, z: 0}
 --- !u!1 &2068369964
 GameObject:
@@ -594,7 +548,7 @@ MeshCollider:
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2068369964}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Convex: 1
@@ -632,8 +586,9 @@ MonoBehaviour:
   dead: 0
   speedConstant: 5
   attacking: 0
-  health: 0
+  health: 1e+12
   facingDirection: 0
+  baseDamage: 2
   moveSpeed: 500
   meleeRange: 1
   gunRange: 75
@@ -659,7 +614,7 @@ Transform:
   - {fileID: 2118042164}
   - {fileID: 1821702709}
   m_Father: {fileID: 0}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2118042163
 GameObject:
@@ -677,7 +632,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &2118042164
 Transform:
   m_ObjectHideFlags: 0

@@ -15,6 +15,7 @@ public abstract class MovingObject : MonoBehaviour {
     [SerializeField] protected float health;
     protected Rigidbody rb;
     [SerializeField] protected FacingDirection facingDirection;
+    [SerializeField] protected float baseDamage = 2;
     [SerializeField] protected float moveSpeed;
     [SerializeField] protected float meleeRange;
     [SerializeField] protected float gunRange;

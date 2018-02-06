@@ -206,8 +206,9 @@ MonoBehaviour:
   attacking: 0
   health: 0
   facingDirection: 0
+  baseDamage: 2
   moveSpeed: 0
-  meleeRange: 0
+  meleeRange: 2
   gunRange: 0
   attackSpeed: 10
   player: {fileID: 1578609158941764, guid: fcafdb4bee87ad24f8c97bd40197b85d, type: 2}
@@ -222,7 +223,7 @@ NavMeshAgent:
   m_Enabled: 1
   m_AgentTypeID: 0
   m_Radius: 0.6
-  m_Speed: 10
+  m_Speed: 5
   m_Acceleration: 8
   avoidancePriority: 50
   m_AngularSpeed: 90

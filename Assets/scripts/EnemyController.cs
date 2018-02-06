@@ -9,11 +9,18 @@ public class EnemyController : MovingObject{
     public GameObject player;
     public Vector3 target;
     public bool reached = false;
+
     private NavMeshAgent agent;
+    private float sqrRemaining;
 
     public override IEnumerator Attack()
     {
-        throw new NotImplementedException();
+        while (sqrRemaining < meleeRange)
+        {
+            player.GetComponent<PlayerController>().TakeDamage(baseDamage);
+            Debug.Log(name + " in range, attacking");
+            yield return null;
+        }
     }
 
     public void Awake()
@@ -29,7 +36,7 @@ public class EnemyController : MovingObject{
         //Debug.Log("test: "+target);
 
         target = player.transform.position;
-        float sqrRemaining = Vector3.SqrMagnitude(transform.position - target);
+        sqrRemaining = Vector3.SqrMagnitude(transform.position - target);
         agent.SetDestination(target);
 
         while (sqrRemaining > float.Epsilon && target == player.transform.position)
@@ -43,6 +50,7 @@ public class EnemyController : MovingObject{
     void Update ()
     {
         CheckIfDead();
+        StartCoroutine(Attack());
 
         if (!reached)
             StartCoroutine(Move());
