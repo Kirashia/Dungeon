@@ -19,14 +19,14 @@ public class EnemyController : MovingObject{
     public void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        rb2d = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody>();
         inverseAttackSpeed = 1 / attackSpeed;
         health = 10;
     }
 
     public override IEnumerator Move()
     {
-        Debug.Log("test: "+target);
+        //Debug.Log("test: "+target);
 
         target = player.transform.position;
         float sqrRemaining = Vector3.SqrMagnitude(transform.position - target);
@@ -40,7 +40,8 @@ public class EnemyController : MovingObject{
     }
 
     // Update is called once per frame
-    void Update () {
+    void Update ()
+    {
         CheckIfDead();
 
         if (!reached)
@@ -49,7 +50,8 @@ public class EnemyController : MovingObject{
         if (dead)
         {
             Debug.Log(name + " has died");
-            enabled = false;
+            Destroy(gameObject);
         }
 	}
+
 }

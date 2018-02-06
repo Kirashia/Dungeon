@@ -8,12 +8,12 @@ public class ExplosionController : MovingObject {
 	public float damage;
     public float knockback;
 
-    private PolygonCollider2D collider;
+    new private PolygonCollider2D collider;
 
 	// Use this for initialization
 	void Start ()
     {
-        rb2d = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody>();
         collider = GetComponent<PolygonCollider2D>();
 	}
     

@@ -8,8 +8,6 @@ public class GunshotController : MovingObject {
     public float damage;
     public float knockback;
 
-    private Rigidbody rb;
-
     private BoxCollider boxCollider;
 
 	// Use this for initialization
@@ -65,12 +63,37 @@ public class GunshotController : MovingObject {
         }
 
         rb.velocity = velocity;
-        Debug.Log(rb.velocity);
+        //Debug.Log(rb.velocity);
     }
 
-    void OnTriggerEnter2D(Collider2D other)
+    void OnTriggerEnter(Collider other)
     {
-        switch (other.tag) {
+        Debug.Log(other.tag+"potato");
+
+        switch (other.tag)
+        {
+            case "Player":
+                return;
+
+            case "Wall":
+                Destroy(gameObject);
+                break;
+
+            case "Enemy":
+                Debug.Log(name + " has hit " + other.name);
+                EnemyController e = other.GetComponentInParent<EnemyController>();
+                e.TakeDamage(facingDirection, damage, knockback);
+                Destroy(gameObject);
+                break;
+        }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Collider other = collision.collider;
+        Debug.Log(other.tag);
+        switch (other.tag)
+        {
             case "Player":
                 return;
 
@@ -86,6 +109,7 @@ public class GunshotController : MovingObject {
                 break;
         }
     }
+
 
     public override IEnumerator Move()
     {

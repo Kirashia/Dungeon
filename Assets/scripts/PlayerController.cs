@@ -11,8 +11,6 @@ public class PlayerController : MovingObject {
 
     public FacingDirection walkingDirection;
 
-    private Rigidbody rb;
-
     public void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -106,6 +104,13 @@ public class PlayerController : MovingObject {
             enabled = false;
         }
 
+        SortOutArrowInputs();
+
+
+    }
+
+    public void SortOutArrowInputs()
+    {
         bool upArrow = Input.GetKey(KeyCode.UpArrow);
         bool downArrow = Input.GetKey(KeyCode.DownArrow);
         bool leftArrow = Input.GetKey(KeyCode.LeftArrow);
@@ -176,56 +181,56 @@ public class PlayerController : MovingObject {
         if (upArrowPressed && leftArrowPressed)
         {
             facingDirection = FacingDirection.NorthWest;
-            directionV = new Vector3(0, 0, 1);
+            directionV = new Vector3(-1, .5f, 1);
 
             angle = 45;
         }
         else if (upArrowPressed && rightArrowPressed)
         {
             facingDirection = FacingDirection.NorthEast;
-            directionV = new Vector3(0, 0, 1);
+            directionV = new Vector3(1, .5f, 1);
 
             angle = -45;
         }
         else if (downArrowPressed && leftArrowPressed)
         {
             facingDirection = FacingDirection.SouthWest;
-            directionV = new Vector3(0, 0, 1);
+            directionV = new Vector3(-1, .5f, -1);
 
             angle = 135;
         }
         else if (downArrowPressed && rightArrowPressed)
         {
             facingDirection = FacingDirection.SouthEast;
-            directionV = new Vector3(0, 0, 1);
+            directionV = new Vector3(1, .5f, -1);
 
             angle = 225;
         }
         else if (upArrowPressed && !downArrowPressed)
         {
             facingDirection = FacingDirection.North;
-            directionV = new Vector3(0, 0, 1);
+            directionV = new Vector3(0, .5f, 1);
 
             angle = 0;
         }
         else if (leftArrowPressed && !rightArrowPressed)
         {
             facingDirection = FacingDirection.West;
-            directionV = new Vector3(0, 0, 1);
+            directionV = new Vector3(-1, .5f, 0);
 
             angle = 90;
         }
         else if (rightArrowPressed && !leftArrowPressed)
         {
             facingDirection = FacingDirection.East;
-            directionV = new Vector3(0, 0, 1);
+            directionV = new Vector3(1, .5f, 0);
 
             angle = -90;
         }
         else if (downArrowPressed && !upArrowPressed)
         {
             facingDirection = FacingDirection.South;
-            directionV = new Vector3(0, 0, 1);
+            directionV = new Vector3(0, .5f, -1);
 
             angle = 180;
         }
@@ -245,7 +250,7 @@ public class PlayerController : MovingObject {
         else
         {
             // Ranged attack
-            GameObject shot = Instantiate(gunshot, transform.position, Quaternion.identity, transform) as GameObject;
+            GameObject shot = Instantiate(gunshot, transform.position + directionV, Quaternion.identity, transform) as GameObject;
             Quaternion target = Quaternion.Euler(90, 0, angle);
             shot.transform.rotation = target;
             shot.GetComponent<GunshotController>().MoveB(facingDirection);
@@ -260,6 +265,18 @@ public class PlayerController : MovingObject {
     public override IEnumerator Attack()
     {
         throw new NotImplementedException();
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        Collider other = collision.collider;
+
+        switch (other.tag)
+        {
+            case "Enemy":
+                TakeDamage(5);
+                break;
+        }
     }
 
 }

@@ -13,7 +13,7 @@ public abstract class MovingObject : MonoBehaviour {
     public bool attacking;
 
     [SerializeField] protected float health;
-    protected Rigidbody2D rb2d;
+    protected Rigidbody rb;
     [SerializeField] protected FacingDirection facingDirection;
     [SerializeField] protected float moveSpeed;
     [SerializeField] protected float meleeRange;
@@ -68,9 +68,18 @@ public abstract class MovingObject : MonoBehaviour {
                 break;
         }
 
-        rb2d.AddForce(force);
+        rb.AddForce(force);
         Debug.Log(name + " is taking " + amountOfKnockback + " knockback");
     }
+
+    public void TakeDamage(float amountOfDamage)
+    {
+        health -= amountOfDamage;
+        
+
+        Debug.Log(name + " is taking " + amountOfDamage + " damage");
+    }
+
 
     public Vector3 GetPosition()
     {
