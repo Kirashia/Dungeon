@@ -6,7 +6,7 @@ using UnityEngine;
 public class PlayerController : MovingObject {
 
     public GameObject gunshot;
-    public GameObject explosion;
+    public GameObject melee;
     public LayerMask blockingLayer;
 
     public FacingDirection walkingDirection;
@@ -89,11 +89,6 @@ public class PlayerController : MovingObject {
         shot.GetComponent<GunshotController>().MoveB(facingDirection);
 
     }
-
-    public IEnumerator ChangeDirection()
-    {
-        yield return null;
-    }
 	
 	void Update ()
     {
@@ -104,9 +99,8 @@ public class PlayerController : MovingObject {
             enabled = false;
         }
 
+        // Interpreting KB inputs
         SortOutArrowInputs();
-
-
     }
 
     public void SortOutArrowInputs()
@@ -162,10 +156,10 @@ public class PlayerController : MovingObject {
 
         }
 
-        //transform.Translate(new Vector3(horizontal, vertical));
+        // Moves the player, or stops them if no input
         rb.velocity = new Vector3(horizontal, 0f, vertical);
-        //Debug.Log(rb.velocity);
 
+        // If the player is pressing an attack button
         if ((upArrow || downArrow || rightArrow || leftArrow || rightCTRL) && !attacking)
             StartCoroutine(Attack(upArrow, downArrow, rightArrow, leftArrow, rightCTRL));
     }
@@ -177,78 +171,131 @@ public class PlayerController : MovingObject {
         float angle = 0;
         Vector3 directionV = Vector3.forward;
 
-        // Controlling the direction the player faces plus adding an attack
-        if (upArrowPressed && leftArrowPressed)
-        {
-            facingDirection = FacingDirection.NorthWest;
-            directionV = new Vector3(-1, .5f, 1);
-
-            angle = 45;
-        }
-        else if (upArrowPressed && rightArrowPressed)
-        {
-            facingDirection = FacingDirection.NorthEast;
-            directionV = new Vector3(1, .5f, 1);
-
-            angle = -45;
-        }
-        else if (downArrowPressed && leftArrowPressed)
-        {
-            facingDirection = FacingDirection.SouthWest;
-            directionV = new Vector3(-1, .5f, -1);
-
-            angle = 135;
-        }
-        else if (downArrowPressed && rightArrowPressed)
-        {
-            facingDirection = FacingDirection.SouthEast;
-            directionV = new Vector3(1, .5f, -1);
-
-            angle = 225;
-        }
-        else if (upArrowPressed && !downArrowPressed)
-        {
-            facingDirection = FacingDirection.North;
-            directionV = new Vector3(0, .5f, 1);
-
-            angle = 0;
-        }
-        else if (leftArrowPressed && !rightArrowPressed)
-        {
-            facingDirection = FacingDirection.West;
-            directionV = new Vector3(-1, .5f, 0);
-
-            angle = 90;
-        }
-        else if (rightArrowPressed && !leftArrowPressed)
-        {
-            facingDirection = FacingDirection.East;
-            directionV = new Vector3(1, .5f, 0);
-
-            angle = -90;
-        }
-        else if (downArrowPressed && !upArrowPressed)
-        {
-            facingDirection = FacingDirection.South;
-            directionV = new Vector3(0, .5f, -1);
-
-            angle = 180;
-        }
-        else
-        {
-            yield return null;
-        }
 
         if (ctrl)
         {
+            // Interpreting the facing direction to a Euler angle
+            switch (walkingDirection)
+            {
+                case FacingDirection.East:
+                    directionV = new Vector3(1, .5f, 0);
+
+                    angle = -90;
+                    break;
+
+                case FacingDirection.West:
+                    directionV = new Vector3(-1, .5f, 0);
+
+                    angle = 90;
+                    break;
+
+                case FacingDirection.North:
+                    directionV = new Vector3(0, .5f, 1);
+
+                    angle = 0;
+                    break;
+
+                case FacingDirection.South:
+                    directionV = new Vector3(0, .5f, -1);
+
+                    angle = 180;
+                    break;
+
+                case FacingDirection.NorthEast:
+                    directionV = new Vector3(1, .5f, 1);
+
+                    angle = -45;
+                    break;
+
+                case FacingDirection.SouthEast:
+                    directionV = new Vector3(1, .5f, -1);
+
+                    angle = 225;
+                    break;
+
+                case FacingDirection.NorthWest:
+                    directionV = new Vector3(-1, .5f, 1);
+
+                    angle = 45;
+                    break;
+
+                case FacingDirection.SouthWest:
+                    directionV = new Vector3(-1, .5f, -1);
+
+                    angle = 135;
+                    break;
+            }
+
             // Melee attack
-            GameObject attack = Instantiate(explosion, transform.position, Quaternion.identity, transform) as GameObject;
+            GameObject attack = Instantiate(melee, transform.position, Quaternion.identity, transform) as GameObject;
             Quaternion target = Quaternion.Euler(90, 0, angle);
             attack.transform.rotation = target;
-            attack.GetComponent<ExplosionController>().Explode(walkingDirection);
+            attack.GetComponent<MeleeController>().Attack(walkingDirection);
         }
         else
         {
+            // Interpreting the arrow key inputs as directions
+            if (upArrowPressed && leftArrowPressed)
+            {
+                facingDirection = FacingDirection.NorthWest;
+                directionV = new Vector3(-1, .5f, 1);
+
+                angle = 45;
+            }
+            else if (upArrowPressed && rightArrowPressed)
+            {
+                facingDirection = FacingDirection.NorthEast;
+                directionV = new Vector3(1, .5f, 1);
+
+                angle = -45;
+            }
+            else if (downArrowPressed && leftArrowPressed)
+            {
+                facingDirection = FacingDirection.SouthWest;
+                directionV = new Vector3(-1, .5f, -1);
+
+                angle = 135;
+            }
+            else if (downArrowPressed && rightArrowPressed)
+            {
+                facingDirection = FacingDirection.SouthEast;
+                directionV = new Vector3(1, .5f, -1);
+
+                angle = 225;
+            }
+            else if (upArrowPressed && !downArrowPressed)
+            {
+                facingDirection = FacingDirection.North;
+                directionV = new Vector3(0, .5f, 1);
+
+                angle = 0;
+            }
+            else if (leftArrowPressed && !rightArrowPressed)
+            {
+                facingDirection = FacingDirection.West;
+                directionV = new Vector3(-1, .5f, 0);
+
+                angle = 90;
+            }
+            else if (rightArrowPressed && !leftArrowPressed)
+            {
+                facingDirection = FacingDirection.East;
+                directionV = new Vector3(1, .5f, 0);
+
+                angle = -90;
+            }
+            else if (downArrowPressed && !upArrowPressed)
+            {
+                facingDirection = FacingDirection.South;
+                directionV = new Vector3(0, .5f, -1);
+
+                angle = 180;
+            }
+            else
+            {
+                yield return null;
+            }
+
             // Ranged attack
             GameObject shot = Instantiate(gunshot, transform.position + directionV, Quaternion.identity, transform) as GameObject;
             Quaternion target = Quaternion.Euler(90, 0, angle);
