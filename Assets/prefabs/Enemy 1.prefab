@@ -208,7 +208,7 @@ MonoBehaviour:
   facingDirection: 0
   baseDamage: 2
   moveSpeed: 0
-  meleeRange: 2
+  meleeRange: 0.5
   gunRange: 0
   attackSpeed: 10
   player: {fileID: 1578609158941764, guid: fcafdb4bee87ad24f8c97bd40197b85d, type: 2}

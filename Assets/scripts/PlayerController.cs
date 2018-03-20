@@ -9,13 +9,29 @@ public class PlayerController : MovingObject {
     public GameObject melee;
     public LayerMask blockingLayer;
 
+    public int invFrames;
     public FacingDirection walkingDirection;
+
+    private bool takingDamage = false;
 
     public void Awake()
     {
         rb = GetComponent<Rigidbody>();
         inverseAttackSpeed = 1 / attackSpeed;
         health = 100;
+    }
+
+	void Update ()
+    {
+        CheckIfDead();
+        if (dead)
+        {
+            Debug.Log("You have died");
+            enabled = false;
+        }
+
+        // Interpreting KB inputs
+        SortOutArrowInputs();
     }
 
     public override IEnumerator Move()
@@ -26,7 +42,7 @@ public class PlayerController : MovingObject {
         rb.velocity = new Vector3(horizontal, 0f, vertical);
         yield return null;
     }
-
+	
     public void NewAttack()
     {
         bool upArrowPressed = Input.GetKey(KeyCode.UpArrow);
@@ -88,19 +104,6 @@ public class PlayerController : MovingObject {
         //Debug.Log(target+": "+angle.ToString());
         shot.GetComponent<GunshotController>().MoveB(facingDirection);
 
-    }
-	
-	void Update ()
-    {
-        CheckIfDead();
-        if (dead)
-        {
-            Debug.Log(name + " has died");
-            enabled = false;
-        }
-
-        // Interpreting KB inputs
-        SortOutArrowInputs();
     }
 
     public void SortOutArrowInputs()
@@ -170,7 +173,7 @@ public class PlayerController : MovingObject {
 
         float angle = 0;
         Vector3 directionV = Vector3.forward;
-
+        Vector3 comepnenstation = new Vector3(0, 0, 0);
 
         if (ctrl)
         {
@@ -179,55 +182,55 @@ public class PlayerController : MovingObject {
             {
                 case FacingDirection.East:
                     directionV = new Vector3(1, .5f, 0);
-
+                    comepnenstation = new Vector3(1, 0, 0);
                     angle = -90;
                     break;
 
                 case FacingDirection.West:
                     directionV = new Vector3(-1, .5f, 0);
-
+                    comepnenstation = new Vector3(-1, 0, 0);
                     angle = 90;
                     break;
 
                 case FacingDirection.North:
                     directionV = new Vector3(0, .5f, 1);
-
+                    comepnenstation = new Vector3(0, 0, 1);
                     angle = 0;
                     break;
 
                 case FacingDirection.South:
                     directionV = new Vector3(0, .5f, -1);
-
+                    comepnenstation = new Vector3(0, 0, -1);
                     angle = 180;
                     break;
 
                 case FacingDirection.NorthEast:
                     directionV = new Vector3(1, .5f, 1);
-
+                    comepnenstation = new Vector3(.5f, 0, .5f);
                     angle = -45;
                     break;
 
                 case FacingDirection.SouthEast:
                     directionV = new Vector3(1, .5f, -1);
-
+                    comepnenstation = new Vector3(.5f, 0, -.5f);
                     angle = 225;
                     break;
 
                 case FacingDirection.NorthWest:
                     directionV = new Vector3(-1, .5f, 1);
-
+                    comepnenstation = new Vector3(-.5f, 0, .5f);
                     angle = 45;
                     break;
 
                 case FacingDirection.SouthWest:
                     directionV = new Vector3(-1, .5f, -1);
-
+                    comepnenstation = new Vector3(-.5f, 0, -.5f);
                     angle = 135;
                     break;
             }
 
             // Melee attack
-            GameObject attack = Instantiate(melee, transform.position, Quaternion.identity, transform) as GameObject;
+            GameObject attack = Instantiate(melee, transform.position + comepnenstation, Quaternion.identity, transform) as GameObject;
             Quaternion target = Quaternion.Euler(90, 0, angle);
             attack.transform.rotation = target;
             attack.GetComponent<MeleeController>().Attack(walkingDirection);
@@ -314,15 +317,33 @@ public class PlayerController : MovingObject {
         throw new NotImplementedException();
     }
 
+    public new void TakeDamage(float amountOfDamage)
+    {
+        StartCoroutine(TakeDamageC(amountOfDamage));
+    }
+
+    public IEnumerator TakeDamageC(int amount)
+    {
+        // Won't take damage if being hit already
+        if (takingDamage)
+            yield break;
+
+        takingDamage = true;
+        health -= amount;
+        yield return new WaitForSeconds(invFrames);
+        takingDamage = false;
+        
+    }
+
     private void OnCollisionEnter(Collision collision)
     {
         Collider other = collision.collider;
-        Debug.Log("test");
+        //Debug.Log("test");
 
         switch (other.tag)
         {
             case "Enemy":
-                TakeDamage(5);
+                TakeDamage();
                 break;
         }
     }
@@ -335,7 +356,7 @@ public class PlayerController : MovingObject {
         switch (other.tag)
         {
             case "Enemy":
-                TakeDamage(5);
+                TakeDamage();
                 break;
         }
     }

@@ -521,8 +521,8 @@ public class Room : MonoBehaviour {
         foreach (Vector2[] pair in connections)
         {
             DrawCorridor(pair[0], pair[1]);
-            if (name == "Map")
-                print("x");
+            //if (name == "Map")
+                //print("x");
         }
     }
 
@@ -731,7 +731,7 @@ public class Room : MonoBehaviour {
     public void WidenBorders()
     {
         MakeTileArrayFromNodes();
-        Debug.Log("Boop");
+        //Debug.Log("Boop");
 
         for (int x = 0; x < actual.GetLength(0); x++)
         {

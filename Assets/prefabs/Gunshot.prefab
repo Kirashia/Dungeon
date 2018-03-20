@@ -86,7 +86,8 @@ MonoBehaviour:
   attacking: 0
   health: 0
   facingDirection: 0
-  moveSpeed: 10
+  baseDamage: 2
+  moveSpeed: 100
   meleeRange: 0
   gunRange: 0
   attackSpeed: 10

@@ -538,7 +538,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -57.499996, y: -85.6}
+  m_AnchoredPosition: {x: -57.5, y: -85.6}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1142920136
@@ -612,7 +612,8 @@ MonoBehaviour:
   player: {fileID: 2068369964}
   enemyPrefab: {fileID: 1560588183154190, guid: d70f34ebdddc83449ac21c607f1c0eac,
     type: 2}
-  numberOfEnemies: 30
+  numberOfEnemies: 1
+  scoreTxt: {fileID: 0}
 --- !u!4 &1243786954
 Transform:
   m_ObjectHideFlags: 0
@@ -712,7 +713,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -57.499996, y: -54.9}
+  m_AnchoredPosition: {x: -57.5, y: -54.9}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1450053387
@@ -786,7 +787,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 170.3, y: -119.4}
+  m_AnchoredPosition: {x: 170.3, y: -119.399994}
   m_SizeDelta: {x: 160, y: 30}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!114 &1484848339
@@ -845,7 +846,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &1803036251
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1202,10 +1203,10 @@ MonoBehaviour:
   gunRange: 75
   attackSpeed: 10
   gunshot: {fileID: 1895992702905218, guid: 53f839a53077fc142b77608950737fa8, type: 2}
-  explosion: {fileID: 1147054801991282, guid: 473b55d8fc009e64782e3a4ac26a2744, type: 2}
+  melee: {fileID: 1147054801991282, guid: 473b55d8fc009e64782e3a4ac26a2744, type: 2}
   blockingLayer:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 256
   walkingDirection: 0
 --- !u!4 &2068369969
 Transform:

@@ -37,35 +37,35 @@ public abstract class MovingObject : MonoBehaviour {
     public void TakeDamage(FacingDirection directionOfDamage, float amountOfDamage, float amountOfKnockback)
     {
         health -= amountOfDamage;
-        Vector2 force = new Vector2(0, 0);
+        Vector2 force = new Vector3(0, 0, 0);
 
         Debug.Log(name + " is taking " + amountOfDamage + " damage");
 
         switch (directionOfDamage)
         {
             case FacingDirection.North:
-                force = new Vector2(0, amountOfKnockback);
+                force = new Vector3(0, 0, amountOfKnockback);
                 break;
             case FacingDirection.South:
-                force = new Vector2(0, -amountOfKnockback);
+                force = new Vector3(0, 0, -amountOfKnockback);
                 break;
             case FacingDirection.East:
-                force = new Vector2(amountOfKnockback, 0);
+                force = new Vector3(amountOfKnockback, 0, 0);
                 break;
             case FacingDirection.West:
-                force = new Vector2(-amountOfKnockback, 0);
+                force = new Vector3(-amountOfKnockback, 0, 0);
                 break;
             case FacingDirection.NorthEast:
-                force = new Vector2(amountOfKnockback / 2, amountOfKnockback / 2);
+                force = new Vector3(amountOfKnockback / 2, 0, amountOfKnockback / 2);
                 break;
             case FacingDirection.NorthWest:
-                force = new Vector2(-amountOfKnockback / 2, amountOfKnockback / 2);
+                force = new Vector3(-amountOfKnockback / 2, 0, amountOfKnockback / 2);
                 break;
             case FacingDirection.SouthEast:
-                force = new Vector2(amountOfKnockback, -amountOfKnockback / 2);
+                force = new Vector3(amountOfKnockback, 0, -amountOfKnockback / 2);
                 break;
             case FacingDirection.SouthWest:
-                force = new Vector2(-amountOfKnockback / 2, -amountOfKnockback / 2);
+                force = new Vector3(-amountOfKnockback / 2, 0, -amountOfKnockback / 2);
                 break;
         }
 

@@ -18,7 +18,7 @@ public class EnemyController : MovingObject{
         while (sqrRemaining < meleeRange)
         {
             player.GetComponent<PlayerController>().TakeDamage(baseDamage);
-            Debug.Log(name + " in range, attacking");
+            //Debug.Log(name + " in range, attacking");
             yield return null;
         }
     }
@@ -62,4 +62,16 @@ public class EnemyController : MovingObject{
         }
 	}
 
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("collide");
+        switch (other.tag)
+        {
+            case "Damager":
+                Debug.Log(name + " has hit " + other.name);
+                MeleeController melee = other.GetComponent<MeleeController>();
+                TakeDamage(facingDirection, melee.damage, melee.knockback);
+                break;
+        }
+    }
 }
