@@ -322,7 +322,7 @@ public class PlayerController : MovingObject {
         StartCoroutine(TakeDamageC(amountOfDamage));
     }
 
-    public IEnumerator TakeDamageC(int amount)
+    public IEnumerator TakeDamageC(float amount)
     {
         // Won't take damage if being hit already
         if (takingDamage)
@@ -343,7 +343,7 @@ public class PlayerController : MovingObject {
         switch (other.tag)
         {
             case "Enemy":
-                TakeDamage();
+                TakeDamage(2);
                 break;
         }
     }
@@ -356,7 +356,7 @@ public class PlayerController : MovingObject {
         switch (other.tag)
         {
             case "Enemy":
-                TakeDamage();
+                TakeDamage(2);
                 break;
         }
     }

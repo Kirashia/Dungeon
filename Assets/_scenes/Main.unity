@@ -612,7 +612,7 @@ MonoBehaviour:
   player: {fileID: 2068369964}
   enemyPrefab: {fileID: 1560588183154190, guid: d70f34ebdddc83449ac21c607f1c0eac,
     type: 2}
-  numberOfEnemies: 1
+  numberOfEnemies: 4
   scoreTxt: {fileID: 0}
 --- !u!4 &1243786954
 Transform:
@@ -638,11 +638,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b6e9e7ff292ff4db2d17594dfa4cd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapWidth: 2
-  mapHeight: 2
+  mapWidth: 3
+  mapHeight: 3
   seed: potato
   tempSeed: 
-  useRandomSeed: 0
+  useRandomSeed: 1
   smoothness: 5
   randomFillPercent: 50
   wall: {fileID: 1762570467653278, guid: f6812553ec2a7fe4a9596b102d2dbd4c, type: 2}
@@ -1207,6 +1207,7 @@ MonoBehaviour:
   blockingLayer:
     serializedVersion: 2
     m_Bits: 256
+  invFrames: 0
   walkingDirection: 0
 --- !u!4 &2068369969
 Transform:

@@ -9,13 +9,10 @@ public class MeleeController : MovingObject
     public float damage;
     public float knockback;
 
-    new private PolygonCollider2D collider;
-
     // Use this for initialization
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        collider = GetComponent<PolygonCollider2D>();
     }
 
 
