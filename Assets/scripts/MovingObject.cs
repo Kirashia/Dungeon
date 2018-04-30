@@ -13,8 +13,9 @@ public abstract class MovingObject : MonoBehaviour {
     public bool attacking;
 
     [SerializeField] protected float health;
-    protected Rigidbody2D rb2d;
+    protected Rigidbody rb;
     [SerializeField] protected FacingDirection facingDirection;
+    [SerializeField] protected float baseDamage = 2;
     [SerializeField] protected float moveSpeed;
     [SerializeField] protected float meleeRange;
     [SerializeField] protected float gunRange;
@@ -33,7 +34,53 @@ public abstract class MovingObject : MonoBehaviour {
         NorthWest,
     }
 
-    public abstract void TakeDamage(FacingDirection directionOfDamage, float amountOfDamage, float amountOfKnockback);
+    public void TakeDamage(FacingDirection directionOfDamage, float amountOfDamage, float amountOfKnockback)
+    {
+        health -= amountOfDamage;
+        Vector2 force = new Vector3(0, 0, 0);
+
+        Debug.Log(name + " is taking " + amountOfDamage + " damage");
+
+        switch (directionOfDamage)
+        {
+            case FacingDirection.North:
+                force = new Vector3(0, 0, amountOfKnockback);
+                break;
+            case FacingDirection.South:
+                force = new Vector3(0, 0, -amountOfKnockback);
+                break;
+            case FacingDirection.East:
+                force = new Vector3(amountOfKnockback, 0, 0);
+                break;
+            case FacingDirection.West:
+                force = new Vector3(-amountOfKnockback, 0, 0);
+                break;
+            case FacingDirection.NorthEast:
+                force = new Vector3(amountOfKnockback / 2, 0, amountOfKnockback / 2);
+                break;
+            case FacingDirection.NorthWest:
+                force = new Vector3(-amountOfKnockback / 2, 0, amountOfKnockback / 2);
+                break;
+            case FacingDirection.SouthEast:
+                force = new Vector3(amountOfKnockback, 0, -amountOfKnockback / 2);
+                break;
+            case FacingDirection.SouthWest:
+                force = new Vector3(-amountOfKnockback / 2, 0, -amountOfKnockback / 2);
+                break;
+        }
+
+        rb.AddForce(force);
+        Debug.Log(name + " is taking " + amountOfKnockback + " knockback");
+    }
+
+    public void TakeDamage(float amountOfDamage)
+    {
+        health -= amountOfDamage;
+        
+
+        Debug.Log(name + " is taking " + amountOfDamage + " damage");
+    }
+
 
     public Vector3 GetPosition()
     {

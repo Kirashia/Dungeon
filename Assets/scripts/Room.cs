@@ -24,10 +24,7 @@ public class Room : MonoBehaviour {
     private List<List<Vector2>> floorTiles;
     private List<Vector2> exitTiles;
     public List<Vector2[]> connections;
-    private bool isStartRoomFlag;
-    private bool isEndRoomFlag;
     private HashSet<Vector2> checkedTiles;
-    private Dictionary<int, HashSet<Vector2>> reigons;
     private System.Random pseudoRandom;
 
     private int constant;
@@ -35,14 +32,12 @@ public class Room : MonoBehaviour {
     public void MakeStartRoom()
     {
         isStartRoom = true;
-        isStartRoomFlag = true;
         isEndRoom = false;
     }
 
     public void MakeEndRoom()
     {
         isEndRoom = true;
-        isEndRoomFlag = true;
         isStartRoom = false;
     }
 
@@ -135,7 +130,6 @@ public class Room : MonoBehaviour {
             startPos = pos;
             randomFillPercent = fillPercent;
             pseudoRandom = new System.Random(seed.GetHashCode());
-            reigons = new Dictionary<int, HashSet<Vector2>>();
             checkedTiles = new HashSet<Vector2>();
             walls = wallTextures;
             floorTiles = new List<List<Vector2>>();
@@ -153,10 +147,6 @@ public class Room : MonoBehaviour {
 
         // Adds a 2x1 hole to each side corresponding to the correct direction
         MakeEntranceAndExitsToReigons(direciton);
-
-        //// Defines the start and end points for the whole map
-        //MakeEntranceAndExitsToRoom();
-
         FindReigons();
         ConnectReigons();
         DrawConnections();
@@ -179,31 +169,16 @@ public class Room : MonoBehaviour {
         seed = tempSeed;
         startPos = pos;
         pseudoRandom = new System.Random(seed.GetHashCode());
-        reigons = new Dictionary<int, HashSet<Vector2>>();
         checkedTiles = new HashSet<Vector2>();
         walls = wallTextures;
         floorTiles = new List<List<Vector2>>();
         connections = new List<Vector2[]>();
         exitTiles = new List<Vector2>();
 
-
-
-        //Debug.Log("hafglibgnel");
-
         FindReigons();
-
-        //print("dklfgOLeji");
 
         ConnectReigons();
         DrawConnections();
-
-        //// A couple more smoothing iterations to hopefully remove random obstacles
-        ////for (int n = 0; n < 2; n++)
-        ////{
-        ////    SmoothMap();
-        ////}
-
-        //InstantiateTiles(0,0);
     }
 
     public int[,] GetRoomNodeLayout()
@@ -242,7 +217,6 @@ public class Room : MonoBehaviour {
             for (int y = 0; y < tiles.GetLength(1); y++)
             {
                 int score = NeighbourCountOf(new Vector2(x, y));
-                //Debug.Log(score+" of "+ new Vector2(x, y));
                 if (score > 4)
                 {
                     tiles[x, y] = 1;
@@ -522,7 +496,11 @@ public class Room : MonoBehaviour {
         {
             DrawCorridor(pair[0], pair[1]);
             //if (name == "Map")
+<<<<<<< HEAD
             //    print("x");
+=======
+                //print("x");
+>>>>>>> 659c880119bd5ba5e0170827bd603a4b27e79e34
         }
     }
 
@@ -646,15 +624,6 @@ public class Room : MonoBehaviour {
     }
 
 
-    //private void OnDrawGizmos()
-    //{
-    //    foreach(Vector2[] pairs in connections)
-    //    {
-    //        Gizmos.color = Color.green;
-    //        Gizmos.DrawLine(pairs[0] + (Vector2)startPos, pairs[1] + (Vector2)startPos);
-    //    }
-    //}
-
     float[] FindClosestTileTo(Vector2 pos, List<List<Vector2>> array)
     {
         // Key:
@@ -713,7 +682,7 @@ public class Room : MonoBehaviour {
         {
             for (int y = 0; y < actual.GetLength(1); y++)
             {
-                if (actual[x,y] != 15 && actual[x,y] != 0)
+                if (/*actual[x,y] != 15 &&*/ actual[x,y] != 0)
                 {
                     GameObject tile = Instantiate(walls[16], new Vector3(x + offsetX, 0f, (y + offsetY)), Quaternion.identity, transform) as GameObject;
                     tile.name = name + actual[x,y];

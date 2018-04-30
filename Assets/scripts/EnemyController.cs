@@ -9,27 +9,34 @@ public class EnemyController : MovingObject{
     public GameObject player;
     public Vector3 target;
     public bool reached = false;
+
     private NavMeshAgent agent;
+    private float sqrRemaining;
 
     public override IEnumerator Attack()
     {
-        throw new NotImplementedException();
+        while (sqrRemaining < meleeRange)
+        {
+            player.GetComponent<PlayerController>().TakeDamage(baseDamage);
+            //Debug.Log(name + " in range, attacking");
+            yield return null;
+        }
     }
 
     public void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
-        rb2d = GetComponent<Rigidbody2D>();
+        rb = GetComponent<Rigidbody>();
         inverseAttackSpeed = 1 / attackSpeed;
         health = 10;
     }
 
     public override IEnumerator Move()
     {
-        Debug.Log("test: "+target);
+        //Debug.Log("test: "+target);
 
         target = player.transform.position;
-        float sqrRemaining = Vector3.SqrMagnitude(transform.position - target);
+        sqrRemaining = Vector3.SqrMagnitude(transform.position - target);
         agent.SetDestination(target);
 
         while (sqrRemaining > float.Epsilon && target == player.transform.position)
@@ -39,48 +46,11 @@ public class EnemyController : MovingObject{
         }
     }
 
-    public override void TakeDamage(FacingDirection directionOfDamage, float amountOfDamage, float amountOfKnockback)
-    {
-        health -= amountOfDamage;
-        Vector2 force = new Vector2(0, 0);
-
-        Debug.Log(name + " is taking " + amountOfDamage + " damage");
-
-        switch (directionOfDamage)
-        {
-            case FacingDirection.North:
-                force = new Vector2(0, amountOfKnockback);
-                break;
-            case FacingDirection.South:
-                force = new Vector2(0, -amountOfKnockback);
-                break;
-            case FacingDirection.East:
-                force = new Vector2(amountOfKnockback, 0);
-                break;
-            case FacingDirection.West:
-                force = new Vector2(-amountOfKnockback, 0);
-                break;
-            case FacingDirection.NorthEast:
-                force = new Vector2(amountOfKnockback / 2, amountOfKnockback / 2);
-                break;
-            case FacingDirection.NorthWest:
-                force = new Vector2(-amountOfKnockback / 2, amountOfKnockback / 2);
-                break;
-            case FacingDirection.SouthEast:
-                force = new Vector2(amountOfKnockback, -amountOfKnockback / 2);
-                break;
-            case FacingDirection.SouthWest:
-                force = new Vector2(-amountOfKnockback / 2, -amountOfKnockback / 2);
-                break;
-        }
-
-        rb2d.AddForce(force);
-        Debug.Log(name + " is taking " + amountOfKnockback + " knockback");
-    }
-
     // Update is called once per frame
-    void Update () {
+    void Update ()
+    {
         CheckIfDead();
+        StartCoroutine(Attack());
 
         if (!reached)
             StartCoroutine(Move());
@@ -88,7 +58,20 @@ public class EnemyController : MovingObject{
         if (dead)
         {
             Debug.Log(name + " has died");
-            enabled = false;
+            Destroy(gameObject);
         }
 	}
+
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log("collide");
+        switch (other.tag)
+        {
+            case "Damager":
+                Debug.Log(name + " has hit " + other.name);
+                MeleeController melee = other.GetComponent<MeleeController>();
+                TakeDamage(facingDirection, melee.damage, melee.knockback);
+                break;
+        }
+    }
 }

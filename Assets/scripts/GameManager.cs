@@ -9,11 +9,12 @@ public class GameManager : MonoBehaviour {
     public GameObject player;
     public GameObject enemyPrefab;
     public int numberOfEnemies;
+    public GameObject scoreTxt;
 
     //private PlayerController playerController;
 
-	// Use this for initialization
-	void Start () {
+    // Use this for initialization
+    void Start () {
 
         if (instance == null)
             instance = this;
