@@ -26,7 +26,7 @@ public class EnemyController : MovingObject{
 
     public override IEnumerator Move()
     {
-        Debug.Log("test: " + target);
+        Debug.Log("test: "+target);
 
         target = player.transform.position;
         float sqrRemaining = Vector3.SqrMagnitude(transform.position - target);

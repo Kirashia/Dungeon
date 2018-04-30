@@ -125,7 +125,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 4145791461042014, guid: fcafdb4bee87ad24f8c97bd40197b85d, type: 2}
       propertyPath: m_LocalPosition.z
-      value: 19.68
+      value: 33.56
       objectReference: {fileID: 0}
     - target: {fileID: 4145791461042014, guid: fcafdb4bee87ad24f8c97bd40197b85d, type: 2}
       propertyPath: m_LocalRotation.x
@@ -154,7 +154,7 @@ Prefab:
       objectReference: {fileID: 0}
     - target: {fileID: 1578609158941764, guid: fcafdb4bee87ad24f8c97bd40197b85d, type: 2}
       propertyPath: m_IsActive
-      value: 1
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 54112175569835422, guid: fcafdb4bee87ad24f8c97bd40197b85d,
         type: 2}
@@ -206,7 +206,7 @@ MonoBehaviour:
   player: {fileID: 2068369964}
   enemyPrefab: {fileID: 1687554392512844, guid: d5938b18e5e1eec43ae8ab2ae498b11c,
     type: 2}
-  numberOfEnemies: 3
+  numberOfEnemies: 0
 --- !u!4 &1243786954
 Transform:
   m_ObjectHideFlags: 0
@@ -231,8 +231,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c0b6e9e7ff292ff4db2d17594dfa4cd5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mapWidth: 2
-  mapHeight: 2
+  mapWidth: 4
+  mapHeight: 4
   seed: potato
   tempSeed: 
   useRandomSeed: 0

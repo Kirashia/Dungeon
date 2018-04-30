@@ -70,6 +70,24 @@ public class BoardCreator : MonoBehaviour {
 
     void GenerateMapTemplate()
     {
+        // Checks if the total size of the map is < 1, i.e one room or invalid input for w and h
+        if (mapWidth * mapHeight < 2)
+        {
+            // Defaults to a "standard" map
+            mapWidth = 2;
+            mapHeight = 2;
+        }
+        // Errors caused on maps 1 room w or h so this stops it
+        else if (mapHeight == 1)
+        {
+            mapHeight = 2;
+        }
+        else if (mapWidth == 1)
+        {
+            mapWidth = 2;
+        }
+
+        // Generating a blank array to hold the map template
         tiles = new int[mapWidth, mapHeight];
 
         for (int x = 0; x < mapWidth; x++)
@@ -81,7 +99,7 @@ public class BoardCreator : MonoBehaviour {
         }
 
         System.Random r = pseudoRandom;
-
+        // Variable init
         Vector2 start = new Vector2(r.Next(0, tiles.GetLength(0)), 0);
         tiles[(int)start.x, (int)start.y] = 1;
         startLocation = start;
@@ -116,11 +134,12 @@ public class BoardCreator : MonoBehaviour {
             {
                 randomDirection = r.Next(1, 6);
             }
-
+            // Checks if the pointer moves off of the map, trying to create a room off the edge of the map
             if (((randomDirection == 1 || randomDirection == 2) && (int)pointer.x == 0) || ((randomDirection == 3 || randomDirection == 4) && (int)pointer.x == mapWidth - 1))
             {
                 if (pointer.y < mapHeight - 1)
                 {
+                    // Moves down
                     dy = 1;
                     currentRoom = (prevRoom == 2) ? 4 : 2;
                     tiles[(int)pointer.x, (int)pointer.y] = currentRoom;
@@ -129,6 +148,7 @@ public class BoardCreator : MonoBehaviour {
                 }
                 else
                 {
+                    // Places exit
                     exitPlaced = true;
                     endLocation = pointer;
                     tiles[(int)pointer.x, (int)pointer.y] = currentRoom;
@@ -138,10 +158,12 @@ public class BoardCreator : MonoBehaviour {
 
             else if (prevRoom == 2)
             {
+                // If the pointer moves down, the next room must be of shape 3 (inverted T shape)
                 currentRoom = 3;
             }
             else
             {
+                // Otherwise it should default to 1 ( - shape)
                 currentRoom = 1;
             }
 
@@ -163,6 +185,7 @@ public class BoardCreator : MonoBehaviour {
 
             if (dy == 1 && pointer.y >= mapHeight - 1)
             {
+                // Places an exit if it tries to move down on the bottom of the map
                 exitPlaced = true;
                 tiles[(int)pointer.x, (int)pointer.y] = currentRoom;
                 endLocation = pointer;
@@ -171,12 +194,15 @@ public class BoardCreator : MonoBehaviour {
 
             try
             {
+                // Attempt to place the current room
                 tiles[(int)pointer.x, (int)pointer.y] = currentRoom;
             }
             catch (System.Exception)
             {
+                // Just in case the pointer is off the edge of the map
                 print("an error occurred");
             }
+            // Moves the pointer, sets up variables for next iteration
             pointer += new Vector2(dx, dy);
             prevDir = randomDirection;
             prevRoom = currentRoom;
