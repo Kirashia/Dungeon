@@ -495,12 +495,6 @@ public class Room : MonoBehaviour {
         foreach (Vector2[] pair in connections)
         {
             DrawCorridor(pair[0], pair[1]);
-            //if (name == "Map")
-<<<<<<< HEAD
-            //    print("x");
-=======
-                //print("x");
->>>>>>> 659c880119bd5ba5e0170827bd603a4b27e79e34
         }
     }
 
